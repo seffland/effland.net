@@ -45,4 +45,51 @@
   .calendar {
     font-size: 10px;
   }
+}
+
+/* Weather Icons and Weather Display Styles */
+.weather-detail {
+  @apply p-3 rounded-md bg-gray-50;
+}
+
+/* Weather icon colors */
+#weather-icon.wi-day-sunny {
+  @apply text-yellow-500;
+}
+
+#weather-icon.wi-rain {
+  @apply text-blue-500;
+}
+
+#weather-icon.wi-fog {
+  @apply text-gray-400;
+}
+
+#weather-icon.wi-strong-wind {
+  @apply text-teal-500;
+}
+
+#weather-icon.wi-cloudy, #weather-icon.wi-day-cloudy {
+  @apply text-gray-500;
+}
+
+/* UV Index colors based on intensity */
+.uv-low {
+  @apply text-green-500;
+}
+
+.uv-moderate {
+  @apply text-yellow-500;
+}
+
+.uv-high {
+  @apply text-orange-500;
+}
+
+.uv-very-high {
+  @apply text-red-500;
+}
+
+.uv-extreme {
+  @apply text-purple-500;
 } 
