@@ -1,2 +1,3 @@
 # Handle 404s
-/* /index.html 200 
+/404.html            /index.html       200
+/*                   /404.html         404 
