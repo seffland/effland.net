@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Movies - Effland.net">
+    <title>Movies - Effland.net</title>
+    <!-- Fallback CSS in case Tailwind fails to load -->
+    <link rel="stylesheet" href="fallback.css">
+    <!-- Main Tailwind CSS -->
+    <link rel="stylesheet" href="dist/output.css">
+    <!-- Movie-specific styles -->
+    <link rel="stylesheet" href="movies.css">
+</head>
+<body>
+    <header class="bg-primary text-white py-8 text-center">
+        <h1 class="text-3xl font-bold mb-4">My Movie Collection</h1>
+        <nav>
+            <ul class="space-x-4">
+                <li class="inline-block"><a href="index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
+                <li class="inline-block"><a href="projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
+                <li class="inline-block"><a href="weather.html" class="text-white hover:text-secondary transition-colors">Weather</a></li>
+                <li class="inline-block"><a href="movies.html" class="text-white hover:text-secondary transition-colors">Movies</a></li>
+                <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-1">
+        <section id="letterboxd-profile" class="mb-12">
+            <div class="flex flex-col md:flex-row items-start gap-8 mb-8">
+                <div class="md:w-1/3">
+                    <!-- Letterboxd Profile Card -->
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center w-full">
+                        <h2 class="text-2xl font-bold text-primary mb-2">Steven Effland</h2>
+                        <h3 class="text-lg text-gray-600 mb-4">@seffland</h3>
+                        <a href="https://letterboxd.com/seffland/" 
+                           target="_blank" 
+                           class="inline-flex items-center gap-2 bg-[#00c030] text-white px-4 py-2 rounded-md hover:bg-[#00a020] transition-colors">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8.29 16.752V7.2H6.546V16.752H8.29zM12.043 16.752V7.2H10.3V16.752h1.743zM15.79 16.752V7.2H14.045V16.752H15.79z"/>
+                            </svg>
+                            View on Letterboxd
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="md:w-2/3">
+                    <!-- About My Film Journey -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-xl font-bold text-primary mb-4">About My Film Journey</h3>
+                        <p class="mb-4">
+                            I've been passionate about cinema for many years. 
+                            Letterboxd has become my digital diary for tracking, rating, and reviewing the movies I watch.
+                        </p>
+                        <p>
+                            Feel free to follow me on Letterboxd to see what I'm watching and share your own recommendations!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-xl font-bold text-primary mb-4">Recent Activity</h3>
+                <p class="text-gray-600 mb-6">My latest film diary entries:</p>
+                
+                <div id="recent-activity">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+            
+            <!-- Favorite Films -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-primary mb-4">Highest Rated Films</h3>
+                <p class="text-gray-600 mb-6">Films I've rated 4+ stars:</p>
+                
+                <div id="favorite-films">
+                    <div class="loading-spinner"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-primary text-white text-center py-4 mt-auto">
+        <p>&copy; 2025 Effland.net. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch and display recent activity
+            fetchLetterboxdRSS('https://letterboxd.com/seffland/rss/', 'recent-activity', 10);
+            
+            // Try multiple approaches to fetch highest-rated films
+            fetchHighestRatedFilms('favorite-films', 12);
+        });
+        
+        async function fetchHighestRatedFilms(elementId, limit) {
+            // Try multiple URLs to find one that works
+            const urls = [
+                'https://letterboxd.com/seffland/films/by/rating/size/large/',
+                'https://letterboxd.com/seffland/films/ratings/',
+                'https://letterboxd.com/seffland/films/ratings/rated/4-5/',
+                'https://letterboxd.com/seffland/films/diary/'
+            ];
+            
+            // Try each URL until one works
+            for (const url of urls) {
+                try {
+                    const corsProxy = 'https://api.allorigins.win/raw?url=';
+                    const response = await fetch(corsProxy + encodeURIComponent(url));
+                    const data = await response.text();
+                    
+                    // Parse the XML
+                    const parser = new DOMParser();
+                    const xml = parser.parseFromString(data, 'application/xml');
+                    const items = xml.querySelectorAll('item');
+                    
+                    // If we found items, process them
+                    if (items.length > 0) {
+                        processMovieItems(items, elementId, limit, url);
+                        return; // Exit if successful
+                    }
+                } catch (error) {
+                    console.error(`Error fetching from ${url}:`, error);
+                    // Continue to next URL
+                }
+            }
+            
+            // If all URLs failed
+            document.getElementById(elementId).innerHTML = `
+                <p class="text-red-500 text-center">
+                    Unable to load your highest-rated films. 
+                    <a href="https://letterboxd.com/seffland/films/" target="_blank" class="underline">
+                        View all your films on Letterboxd
+                    </a>
+                </p>
+            `;
+        }
+        
+        async function fetchLetterboxdRSS(url, elementId, limit) {
+            try {
+                // Use a CORS proxy to fetch the RSS feed
+                const corsProxy = 'https://api.allorigins.win/raw?url=';
+                const response = await fetch(corsProxy + encodeURIComponent(url));
+                const data = await response.text();
+                
+                // Parse the XML
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(data, 'application/xml');
+                const items = xml.querySelectorAll('item');
+                
+                // Process the items
+                processMovieItems(items, elementId, limit, url);
+                
+            } catch (error) {
+                console.error('Error fetching Letterboxd RSS:', error);
+                document.getElementById(elementId).innerHTML = `
+                    <p class="text-red-500 text-center">
+                        Error loading data from Letterboxd. 
+                        <a href="${url}" target="_blank" class="underline">
+                            View directly on Letterboxd
+                        </a>
+                    </p>
+                `;
+            }
+        }
+        
+        function processMovieItems(items, elementId, limit, url) {
+            // Get the container element
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            
+            // Create the movie grid
+            const movieGrid = document.createElement('div');
+            movieGrid.className = 'movie-grid';
+            
+            // Process each item up to the limit
+            const itemsToShow = Array.from(items).slice(0, limit);
+            
+            // If no items were found
+            if (itemsToShow.length === 0) {
+                container.innerHTML = `
+                    <p class="text-gray-500 text-center">
+                        No items found. 
+                        <a href="${url}" target="_blank" class="text-secondary hover:underline">
+                            View on Letterboxd
+                        </a>
+                    </p>
+                `;
+                return;
+            }
+            
+            itemsToShow.forEach(item => {
+                const title = item.querySelector('title').textContent;
+                const link = item.querySelector('link').textContent;
+                const description = item.querySelector('description').textContent;
+                
+                // Extract the image URL from the description
+                const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
+                const imgUrl = imgMatch ? imgMatch[1] : '';
+                
+                // Extract the rating if available
+                const ratingMatch = title.match(/★+/);
+                const rating = ratingMatch ? ratingMatch[0] : '';
+                
+                // Clean the title (remove rating)
+                const cleanTitle = title.replace(/★+\s*/, '');
+                
+                // Create movie card
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card relative';
+                
+                // Create movie content
+                movieCard.innerHTML = `
+                    <a href="${link}" target="_blank" class="block">
+                        <img src="${imgUrl}" alt="${cleanTitle}" class="movie-poster w-full">
+                        ${rating ? `<span class="movie-rating">${rating}</span>` : ''}
+                        <h4 class="text-sm font-medium mt-2 line-clamp-2">${cleanTitle}</h4>
+                    </a>
+                `;
+                
+                movieGrid.appendChild(movieCard);
+            });
+            
+            container.appendChild(movieGrid);
+        }
+    </script>
+</body>
+</html> 
