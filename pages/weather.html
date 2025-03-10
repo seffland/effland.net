@@ -106,10 +106,28 @@
                         <p>Data is updated every few minutes and displayed here in real-time.</p>
                     </div>
                     <div class="md:w-1/2">
-                        <img src="https://weatherflow.com/wp-content/uploads/2021/02/Tempest-Weather-System-1.jpg" 
-                             alt="Tempest Weather Station" 
-                             class="rounded-lg shadow-sm w-full h-auto">
-                        <p class="text-sm text-gray-500 mt-2 text-center">Tempest Weather System</p>
+                        <!-- Tempest Weather Map Embed 
+                            Customization options:
+                            - zoom: 1-18 (higher number = closer zoom)
+                            - radar: true/false (show precipitation radar)
+                            - satellite: true/false (satellite imagery vs. map)
+                            - windAnimation: true/false (animated wind patterns)
+                            - units: imperial/metric (measurement units)
+                            - darkMode: true/false (dark theme for the map)
+                            - showStationLabels: true/false (show station names)
+                            - showLegend: true/false (show data legend)
+                            - showTimeline: true/false (show time controls)
+                        -->
+                        <div class="rounded-lg shadow-sm overflow-hidden" style="height: 400px;">
+                            <iframe 
+                                src="https://tempestwx.com/map/134901/embed?lat=39.0438&lon=-77.4874&zoom=11&radar=true&satellite=false&windAnimation=true&units=imperial" 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2 text-center">Live Tempest Weather Map</p>
                     </div>
                 </div>
             </div>
