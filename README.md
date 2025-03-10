@@ -1,8 +1,60 @@
 # Effland.net
 
-Personal website built with HTML, Tailwind CSS, and JavaScript.
+Personal website for Steven Effland.
+
+## Project Structure
+
+```
+effland.net/
+├── dist/                  # Compiled assets
+│   └── output.css         # Compiled Tailwind CSS
+├── pages/                 # HTML pages
+│   ├── contact.html
+│   ├── movies.html
+│   ├── projects.html
+│   └── weather.html
+├── src/                   # Source files
+│   ├── css/               # CSS files
+│   │   ├── fallback.css   # Fallback CSS
+│   │   └── movies.css     # Movie-specific styles
+│   ├── js/                # JavaScript files
+│   └── input.css          # Tailwind CSS source
+├── index.html             # Homepage
+├── package.json           # Project dependencies
+├── tailwind.config.js     # Tailwind configuration
+└── README.md              # Project documentation
+```
+
+## GitHub Calendar Setup
+
+The GitHub contribution calendar on the Projects page requires a local proxy server to work correctly when running the site locally. This is due to CORS restrictions when accessing the GitHub API from a local file.
+
+### Running the Proxy Server
+
+1. Make sure you have Node.js installed on your system
+2. Open a terminal in the project root directory
+3. Run the proxy server:
+   ```
+   node github-proxy.js
+   ```
+4. You should see a message indicating the server is running at http://localhost:3000
+5. Keep this terminal window open while viewing the website
+6. Load or refresh the Projects page in your browser
+
+### Troubleshooting
+
+If you see "Unable to load GitHub contributions at this time" on the Projects page, check that:
+
+1. The proxy server is running
+2. You're using the correct GitHub username in the code
+3. Your network allows connections to GitHub's API
 
 ## Development
+
+This website is built with:
+- HTML5
+- Tailwind CSS
+- JavaScript
 
 1. Install dependencies:
 ```bash
@@ -18,6 +70,10 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## License
+
+© 2025 Effland.net. All rights reserved.
 
 ## Deployment to Cloudflare Pages
 
