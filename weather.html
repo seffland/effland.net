@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Weather Data - Effland.net">
     <title>Weather - Effland.net</title>
+    <!-- Fallback CSS in case Tailwind fails to load -->
+    <link rel="stylesheet" href="fallback.css">
+    <!-- Main Tailwind CSS -->
     <link rel="stylesheet" href="dist/output.css">
     <!-- Weather Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <!-- Debug styles -->
+    <style>
+        .css-test {
+            border: 3px solid red;
+            padding: 5px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
     <header class="bg-primary text-white py-8 text-center">
@@ -20,6 +32,12 @@
                 <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
             </ul>
         </nav>
+        <!-- CSS Test Element -->
+        <div class="css-test">
+            <p>CSS Test: If you see a red border, inline CSS is working</p>
+            <p class="text-secondary">If this text is blue, Tailwind CSS is working</p>
+            <p><i class="wi wi-day-sunny"></i> If you see a sun icon, Weather Icons are working</p>
+        </div>
     </header>
 
     <main class="max-w-4xl mx-auto px-4 py-8 flex-1">

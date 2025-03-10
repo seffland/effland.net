@@ -4,7 +4,8 @@
   "description": "Personal website for Effland.net",
   "scripts": {
     "dev": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
-    "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify"
+    "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "postbuild": "echo 'CSS build completed successfully'"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.1"
