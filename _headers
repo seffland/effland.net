@@ -1,7 +1,3 @@
-# Cache CSS files for 1 hour but allow revalidation
-/dist/output.css
-  Cache-Control: public, max-age=3600, must-revalidate
-
-# Cache other static assets
+# Cache static assets
 /*
   Cache-Control: public, max-age=86400 

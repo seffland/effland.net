@@ -1,6 +1,2 @@
-# Ensure CSS files are properly served
-/dist/output.css /dist/output.css 200
-/fallback.css /fallback.css 200
-
 # Handle 404s
 /* /index.html 200 
