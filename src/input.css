@@ -6,4 +6,43 @@
   body {
     @apply font-sans text-text bg-background min-h-screen flex flex-col;
   }
+}
+
+/* GitHub Calendar Custom Styles */
+.calendar {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Style the contribution squares */
+.js-calendar-graph-svg rect.ContributionCalendar-day {
+  @apply rounded-sm;
+}
+
+/* Style the tooltip */
+.js-calendar-graph-svg .ContributionCalendar-tooltip {
+  @apply bg-white shadow-lg rounded-md border border-gray-200 text-text text-sm py-1 px-2;
+}
+
+/* Style the month labels */
+.js-calendar-graph-svg text.month {
+  @apply fill-gray-500 text-xs;
+}
+
+/* Style the day of week labels */
+.js-calendar-graph-svg text.wday {
+  @apply fill-gray-500 text-xs;
+}
+
+/* Adjust the legend */
+.contrib-legend {
+  @apply text-xs text-gray-500 mt-2;
+}
+
+/* Make the calendar responsive */
+@media (max-width: 640px) {
+  .calendar {
+    font-size: 10px;
+  }
 } 
