@@ -5,33 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Projects - Effland.net">
     <title>Projects - Effland.net</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dist/output.css">
 </head>
 <body>
-    <header>
-        <h1>My Projects</h1>
+    <header class="bg-primary text-white py-8 text-center">
+        <h1 class="text-3xl font-bold mb-4">My Projects</h1>
         <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="projects.html">Projects</a></li>
-                <li><a href="contact.html">Contact</a></li>
+            <ul class="space-x-4">
+                <li class="inline-block"><a href="index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
+                <li class="inline-block"><a href="projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
+                <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
+    <main class="max-w-3xl mx-auto px-4 py-8 flex-1">
         <section id="projects">
-            <h2>Projects</h2>
-            <p>Here are some of my recent projects:</p>
-            <div class="project-card">
-                <h3>effland.net</h3>
-                <p>This is the website you are currently on.</p>
-                <iframe src="https://ghbtns.com/github-btn.html?seffland&effland.net&type=star&count=true" frameborder="0" scrolling="0" width="170" height="20" title="GitHub"></iframe>
+            <h2 class="text-2xl font-bold mb-4">Projects</h2>
+            <p class="mb-8 text-text">Here are some of my recent projects:</p>
+            
+            <div class="grid gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-primary">effland.net</h3>
+                        <a href="https://github.com/seffland/effland.net" 
+                           target="_blank"
+                           class="inline-flex items-center gap-2 text-secondary hover:text-secondary-dark">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                            </svg>
+                            View on GitHub
+                        </a>
+                    </div>
+                    <p class="text-text mb-4">This is the website you are currently on. Built with modern web technologies including HTML5, Tailwind CSS, and JavaScript.</p>
+                    <div class="flex gap-2 flex-wrap">
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm">HTML5</span>
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm">Tailwind CSS</span>
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm">JavaScript</span>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
-    <footer>
+    <footer class="bg-primary text-white text-center py-4 mt-auto">
         <p>&copy; 2025 Effland.net. All rights reserved.</p>
     </footer>
 </body>
