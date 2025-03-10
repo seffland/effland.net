@@ -37,8 +37,22 @@
                         <a href="https://letterboxd.com/seffland/" 
                            target="_blank" 
                            class="inline-flex items-center gap-2 bg-[#00c030] text-white px-4 py-2 rounded-md hover:bg-[#00a020] transition-colors">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M8.29 16.752V7.2H6.546V16.752H8.29zM12.043 16.752V7.2H10.3V16.752h1.743zM15.79 16.752V7.2H14.045V16.752H15.79z"/>
+                            <svg class="w-6 h-6" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Official Letterboxd Dots color social decal -->
+                                <g fill="none" fill-rule="evenodd">
+                                    <circle fill="#FFFFFF" cx="250" cy="250" r="250"/>
+                                    <g transform="translate(61.000000, 180.000000)">
+                                        <ellipse fill="#00E054" cx="189" cy="69.9732824" rx="70.0786517" ry="69.9732824"/>
+                                        <g transform="translate(248.152672, 0.000000)">
+                                            <ellipse fill="#40BCF4" cx="59.7686766" cy="69.9732824" rx="70.0786517" ry="69.9732824"/>
+                                        </g>
+                                        <g>
+                                            <ellipse fill="#FF8000" cx="70.0786517" cy="69.9732824" rx="70.0786517" ry="69.9732824"/>
+                                        </g>
+                                        <path d="M129.539326,107.022244 C122.810493,96.2781677 118.921348,83.5792213 118.921348,69.9732824 C118.921348,56.3673435 122.810493,43.6683972 129.539326,32.9243209 C136.268159,43.6683972 140.157303,56.3673435 140.157303,69.9732824 C140.157303,83.5792213 136.268159,96.2781677 129.539326,107.022244 Z" fill="#556677"/>
+                                        <path d="M248.460674,32.9243209 C255.189507,43.6683972 259.078652,56.3673435 259.078652,69.9732824 C259.078652,83.5792213 255.189507,96.2781677 248.460674,107.022244 C241.731841,96.2781677 237.842697,83.5792213 237.842697,69.9732824 C237.842697,56.3673435 241.731841,43.6683972 248.460674,32.9243209 Z" fill="#556677"/>
+                                    </g>
+                                </g>
                             </svg>
                             View on Letterboxd
                         </a>
@@ -69,16 +83,6 @@
                     <div class="loading-spinner"></div>
                 </div>
             </div>
-            
-            <!-- Favorite Films -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-bold text-primary mb-4">Highest Rated Films</h3>
-                <p class="text-gray-600 mb-6">Films I've rated 4+ stars:</p>
-                
-                <div id="favorite-films">
-                    <div class="loading-spinner"></div>
-                </div>
-            </div>
         </section>
     </main>
 
@@ -90,53 +94,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Fetch and display recent activity
             fetchLetterboxdRSS('https://letterboxd.com/seffland/rss/', 'recent-activity', 10);
-            
-            // Try multiple approaches to fetch highest-rated films
-            fetchHighestRatedFilms('favorite-films', 12);
         });
-        
-        async function fetchHighestRatedFilms(elementId, limit) {
-            // Try multiple URLs to find one that works
-            const urls = [
-                'https://letterboxd.com/seffland/films/by/rating/size/large/',
-                'https://letterboxd.com/seffland/films/ratings/',
-                'https://letterboxd.com/seffland/films/ratings/rated/4-5/',
-                'https://letterboxd.com/seffland/films/diary/'
-            ];
-            
-            // Try each URL until one works
-            for (const url of urls) {
-                try {
-                    const corsProxy = 'https://api.allorigins.win/raw?url=';
-                    const response = await fetch(corsProxy + encodeURIComponent(url));
-                    const data = await response.text();
-                    
-                    // Parse the XML
-                    const parser = new DOMParser();
-                    const xml = parser.parseFromString(data, 'application/xml');
-                    const items = xml.querySelectorAll('item');
-                    
-                    // If we found items, process them
-                    if (items.length > 0) {
-                        processMovieItems(items, elementId, limit, url);
-                        return; // Exit if successful
-                    }
-                } catch (error) {
-                    console.error(`Error fetching from ${url}:`, error);
-                    // Continue to next URL
-                }
-            }
-            
-            // If all URLs failed
-            document.getElementById(elementId).innerHTML = `
-                <p class="text-red-500 text-center">
-                    Unable to load your highest-rated films. 
-                    <a href="https://letterboxd.com/seffland/films/" target="_blank" class="underline">
-                        View all your films on Letterboxd
-                    </a>
-                </p>
-            `;
-        }
         
         async function fetchLetterboxdRSS(url, elementId, limit) {
             try {
