@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./**/*.{html,js}"],
+  content: [
+    "./*.html",
+    "./pages/**/*.html",
+    "./js/**/*.js"  // More specific path for your JS files
+  ],
   darkMode: 'class', // Enable dark mode with class strategy
   theme: {
     extend: {
