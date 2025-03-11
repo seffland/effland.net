@@ -1,3 +1,4 @@
+pages\contact.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,8 @@
     <meta name="description" content="Contact - Effland.net">
     <title>Contact - Effland.net</title>
     <link rel="stylesheet" href="../dist/output.css">
+    <!-- Add Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="bg-primary text-white py-8 text-center">
@@ -60,11 +63,18 @@
         
         <div class="mt-8 mb-8">
             <h3 class="text-xl font-bold mb-4">Contact Information</h3>
-            <p class="mb-2">Email: <a href="mailto:steven@effland.net" class="text-secondary hover:text-secondary-dark">steven@effland.net</a></p>
-            <p>Connect with me on 
-                <a href="https://linkedin.com/in/steven-effland" target="_blank" class="text-secondary hover:text-secondary-dark">LinkedIn</a> or 
-                <a href="https://github.com/seffland" target="_blank" class="text-secondary hover:text-secondary-dark">GitHub</a>
+            <p class="mb-4">
+                <i class="fas fa-envelope mr-2 text-secondary"></i>
+                Email: <a href="mailto:steven@effland.net" class="text-secondary hover:text-secondary-dark">steven@effland.net</a>
             </p>
+            <div class="flex gap-4 mt-4">
+                <a href="https://linkedin.com/in/steven-effland" target="_blank" class="text-secondary hover:text-secondary-dark" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin fa-2x"></i>
+                </a>
+                <a href="https://github.com/seffland" target="_blank" class="text-secondary hover:text-secondary-dark" aria-label="GitHub">
+                    <i class="fab fa-github fa-2x"></i>
+                </a>
+            </div>
         </div>
     </main>
 
@@ -80,4 +90,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
