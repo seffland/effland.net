@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +13,34 @@
     <link rel="stylesheet" href="../dist/output.css">
     <!-- GitHub Calendar CSS -->
     <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css">
+    
+    <!-- Dark mode script -->
+    <script>
+        // Check for saved theme preference or prefer-color-scheme
+        if (localStorage.theme === 'dark' || 
+           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body>
-    <header class="bg-primary text-white py-8 text-center">
+<body class="min-h-screen flex flex-col bg-background dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <header class="bg-primary text-white py-8 text-center relative">
+        <!-- Theme toggle button -->
+        <div class="absolute right-4 top-4">
+            <button id="theme-toggle" type="button" class="text-gray-200 hover:text-white p-2 rounded-lg text-sm">
+                <!-- Sun icon -->
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+                <!-- Moon icon -->
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+            </button>
+        </div>
+        
         <h1 class="text-3xl font-bold mb-4">My Projects</h1>
         <nav>
             <ul class="space-x-4">
@@ -28,17 +53,17 @@
         </nav>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 py-8 flex-1">
+    <main class="max-w-3xl mx-auto px-4 py-8 flex-1 dark:bg-gray-900">
         <!-- GitHub Activity Section -->
         <section id="github-activity" class="mb-12">
-            <h2 class="text-2xl font-bold mb-4">GitHub Activity</h2>
-            <p class="mb-6 text-text">Check out my contribution activity on GitHub:</p>
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">GitHub Activity</h2>
+            <p class="mb-6 text-text dark:text-gray-300">Check out my contribution activity on GitHub:</p>
             
             <!-- GitHub Calendar Container -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
                 <div class="calendar mb-4">
                     <!-- GitHub Calendar will be loaded here -->
-                    <div class="text-center text-gray-500">Loading GitHub contribution data...</div>
+                    <div class="text-center text-gray-500 dark:text-gray-400">Loading GitHub contribution data...</div>
                 </div>
                 <div class="text-center">
                     <a href="https://github.com/seffland" 
@@ -54,13 +79,13 @@
         </section>
 
         <section id="projects">
-            <h2 class="text-2xl font-bold mb-4">Projects</h2>
-            <p class="mb-8 text-text">Here are some of my recent projects:</p>
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">Projects</h2>
+            <p class="mb-8 text-text dark:text-gray-300">Here are some of my recent projects:</p>
             
             <div class="grid gap-6">
-                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow dark:bg-gray-800">
                     <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-xl font-bold text-primary">effland.net</h3>
+                        <h3 class="text-xl font-bold text-primary dark:text-white">effland.net</h3>
                         <a href="https://github.com/seffland/effland.net" 
                            target="_blank"
                            class="inline-flex items-center gap-2 text-secondary hover:text-secondary-dark">
@@ -70,11 +95,11 @@
                             View on GitHub
                         </a>
                     </div>
-                    <p class="text-text mb-4">This is the website you are currently on. Built with modern web technologies including HTML5, Tailwind CSS, and JavaScript.</p>
+                    <p class="text-text dark:text-gray-300 mb-4">This is the website you are currently on. Built with modern web technologies including HTML5, Tailwind CSS, and JavaScript.</p>
                     <div class="flex gap-2 flex-wrap">
-                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm">HTML5</span>
-                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm">Tailwind CSS</span>
-                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm">JavaScript</span>
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm dark:bg-secondary/20">HTML5</span>
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm dark:bg-secondary/20">Tailwind CSS</span>
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm dark:bg-secondary/20">JavaScript</span>
                     </div>
                 </div>
             </div>
@@ -87,6 +112,7 @@
 
     <!-- GitHub Calendar JavaScript -->
     <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script>
+    
     <script>
         // Initialize GitHub Calendar
         document.addEventListener('DOMContentLoaded', function() {
@@ -94,7 +120,66 @@
                 responsive: true,
                 tooltips: true 
             });
+            
+            // Theme toggle functionality
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+
+            // Function to update UI based on current theme
+            function updateThemeUI() {
+                // Check if we're in dark mode
+                if (document.documentElement.classList.contains('dark')) {
+                    // Show sun icon in dark mode (to switch to light)
+                    themeToggleLightIcon.classList.remove('hidden');
+                    themeToggleDarkIcon.classList.add('hidden');
+                } else {
+                    // Show moon icon in light mode (to switch to dark)
+                    themeToggleLightIcon.classList.add('hidden');
+                    themeToggleDarkIcon.classList.remove('hidden');
+                }
+            }
+
+            // Set initial icon state
+            updateThemeUI();
+
+            // Toggle the theme when the button is clicked
+            themeToggleBtn.addEventListener('click', function() {
+                // Toggle dark class
+                document.documentElement.classList.toggle('dark');
+                
+                // Update localStorage based on new state
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+
+                // Update the UI to match current theme
+                updateThemeUI();
+            });
         });
     </script>
+    
+    <!-- Custom styles for GitHub calendar in dark mode -->
+    <style>
+        /* Dark mode styles for GitHub calendar */
+        .dark .calendar {
+            color: #e5e7eb;
+        }
+        
+        .dark .calendar h2 {
+            color: #f3f4f6;
+        }
+        
+        .dark .calendar-graph text.month,
+        .dark .calendar-graph text.wday {
+            fill: #9ca3af;
+        }
+        
+        .dark rect.day {
+            stroke: #374151;
+        }
+    </style>
 </body>
 </html>
