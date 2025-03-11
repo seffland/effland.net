@@ -1,16 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./*.{html,js}", "./src/**/*.{html,js,css}", "./pages/**/*.{html,js}"],
+  content: ["./**/*.{html,js}"],
+  darkMode: 'class', // Enable dark mode with class strategy
   theme: {
     extend: {
       colors: {
-        primary: '#2c3e50',
-        secondary: '#3498db',
-        'secondary-dark': '#2980b9',
-        text: '#333',
-        background: '#f5f6fa'
-      }
-    }
+        primary: '#0f172a',    // Slate 900
+        secondary: '#38bdf8',  // Sky 400
+        'secondary-dark': '#0284c7', // Sky 600  
+        background: '#f8fafc',  // Slate 50
+        text: '#334155',       // Slate 700
+      },
+    },
   },
   plugins: [],
-} 
+}

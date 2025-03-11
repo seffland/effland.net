@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +11,31 @@
     <link rel="alternate icon" href="/favicon.ico" type="image/x-icon">
     
     <link rel="stylesheet" href="dist/output.css">
+    <script>
+        // Check for saved theme preference or prefer-color-scheme
+        if (localStorage.theme === 'dark' || 
+           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body class="min-h-screen flex flex-col bg-background">
-    <header class="bg-primary text-white py-8 text-center">
+<body class="min-h-screen flex flex-col bg-background dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <header class="bg-primary text-white py-8 text-center relative">
+        <div class="absolute right-4 top-4">
+            <button id="theme-toggle" type="button" class="text-gray-200 hover:text-white p-2 rounded-lg text-sm">
+                <!-- Sun icon -->
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+                <!-- Moon icon -->
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+            </button>
+        </div>
+
         <h1 class="text-4xl font-bold mb-2">Welcome to Effland.net</h1>
         <p class="text-lg text-gray-200 mb-6">Personal website of Steven Effland</p>
         <nav>
@@ -27,17 +49,17 @@
         </nav>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-12 flex-1">
+    <main class="max-w-6xl mx-auto px-4 py-12 flex-1 dark:bg-gray-900">
         <section id="about" class="mb-16">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">About Me</h2>
-                <p class="text-text max-w-2xl mx-auto">Welcome to my personal website. I'm passionate about technology, weather, cinema, and web development. Explore the different sections below to learn more about my interests and projects.</p>
+                <h2 class="text-3xl font-bold mb-4 dark:text-white">About Me</h2>
+                <p class="text-text max-w-2xl mx-auto dark:text-gray-300">Welcome to my personal website. I'm passionate about technology, weather, cinema, and web development. Explore the different sections below to learn more about my interests and projects.</p>
             </div>
         </section>
 
         <section id="featured-pages" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             <!-- Weather Card -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col dark:bg-gray-800">
                 <div class="bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center py-8 min-h-[120px]">
                     <svg class="w-16 h-16 text-white" width="64" height="64" fill="currentColor" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;">
                         <path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8zM7.83 14c.37 0 .67.26.74.62.41 2.22 2.28 2.98 3.64 2.87.43-.02.79.32.79.75 0 .4-.32.73-.72.75-2.13.13-4.62-1.09-5.19-4.12-.08-.45.28-.87.74-.87z"/>
@@ -51,7 +73,7 @@
             </div>
 
             <!-- Projects Card -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col dark:bg-gray-800">
                 <div class="bg-gradient-to-r from-green-400 to-green-600 flex items-center justify-center py-8 min-h-[120px]">
                     <svg class="w-16 h-16 text-white" width="64" height="64" fill="currentColor" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;">
                         <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
@@ -65,7 +87,7 @@
             </div>
 
             <!-- Movies Card -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col dark:bg-gray-800">
                 <div class="bg-gradient-to-r from-red-400 to-red-600 flex items-center justify-center py-8 min-h-[120px]">
                     <svg class="w-16 h-16 text-white" width="64" height="64" fill="currentColor" viewBox="0 0 24 24" style="display: inline-block; vertical-align: middle;">
                         <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
@@ -117,5 +139,47 @@
             </a>
         </div>
     </footer>
+
+    <script>
+        // JavaScript to toggle between light and dark mode
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+
+            // Function to update UI based on current theme
+            function updateThemeUI() {
+                // Check if we're in dark mode
+                if (document.documentElement.classList.contains('dark')) {
+                    // Show sun icon in dark mode (to switch to light)
+                    themeToggleLightIcon.classList.remove('hidden');
+                    themeToggleDarkIcon.classList.add('hidden');
+                } else {
+                    // Show moon icon in light mode (to switch to dark)
+                    themeToggleLightIcon.classList.add('hidden');
+                    themeToggleDarkIcon.classList.remove('hidden');
+                }
+            }
+
+            // Set initial icon state
+            updateThemeUI();
+
+            // Toggle the theme when the button is clicked
+            themeToggleBtn.addEventListener('click', function() {
+                // Toggle dark class
+                document.documentElement.classList.toggle('dark');
+                
+                // Update localStorage based on new state
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+
+                // Update the UI to match current theme
+                updateThemeUI();
+            });
+        });
+    </script>
 </body>
 </html>
