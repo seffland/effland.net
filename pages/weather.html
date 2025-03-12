@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +13,34 @@
     <link rel="stylesheet" href="../dist/output.css">
     <!-- Weather Icons CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+    
+    <!-- Dark mode script -->
+    <script>
+        // Check for saved theme preference or prefer-color-scheme
+        if (localStorage.theme === 'dark' || 
+           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body>
-    <header class="bg-primary text-white py-8 text-center">
+<body class="min-h-screen flex flex-col bg-background dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <header class="bg-primary text-white py-8 text-center relative">
+        <!-- Theme toggle button -->
+        <div class="absolute right-4 top-4">
+            <button id="theme-toggle" type="button" class="text-gray-200 hover:text-white p-2 rounded-lg text-sm">
+                <!-- Sun icon -->
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+                <!-- Moon icon -->
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+            </button>
+        </div>
+        
         <h1 class="text-3xl font-bold mb-4">Weather Dashboard</h1>
         <nav>
             <ul class="space-x-4">
@@ -28,19 +53,19 @@
         </nav>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 py-8 flex-1">
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-1 dark:bg-gray-900">
         <section id="weather-station">
-            <h2 class="text-2xl font-bold mb-4">My Tempest Weather Station</h2>
-            <p class="mb-8 text-text">Live weather data from my personal Tempest weather station.</p>
+            <h2 class="text-2xl font-bold mb-4 dark:text-white">My Tempest Weather Station</h2>
+            <p class="mb-8 text-text dark:text-gray-300">Live weather data from my personal Tempest weather station.</p>
             
             <!-- Current Conditions Card -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h3 class="text-xl font-bold text-primary mb-4">Current Conditions</h3>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8 dark:bg-gray-800">
+                <h3 class="text-xl font-bold text-primary dark:text-white mb-4">Current Conditions</h3>
                 
                 <!-- Loading Indicator - Not hidden by default -->
                 <div id="loading-indicator" class="text-center py-8">
                     <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-secondary border-t-transparent"></div>
-                    <p class="mt-4 text-gray-600">Loading weather data from Tempest station...</p>
+                    <p class="mt-4 text-gray-600 dark:text-gray-400">Loading weather data from Tempest station...</p>
                 </div>
                 
                 <!-- Weather Data - Hidden by default -->
@@ -50,43 +75,43 @@
                         <div class="flex items-center">
                             <div id="weather-icon" class="text-6xl mr-4 text-secondary"></div>
                             <div>
-                                <div id="temperature" class="text-4xl font-bold"></div>
-                                <div id="conditions" class="text-lg text-gray-600"></div>
-                                <div id="feels-like" class="text-sm text-gray-500"></div>
+                                <div id="temperature" class="text-4xl font-bold dark:text-white"></div>
+                                <div id="conditions" class="text-lg text-gray-600 dark:text-gray-300"></div>
+                                <div id="feels-like" class="text-sm text-gray-500 dark:text-gray-400"></div>
                             </div>
                         </div>
                         
                         <!-- Weather Details -->
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="weather-detail">
-                                <div class="text-gray-500 text-sm">Humidity</div>
-                                <div id="humidity" class="font-semibold"></div>
+                            <div class="weather-detail p-2 rounded dark:bg-gray-700">
+                                <div class="text-gray-500 dark:text-gray-300 text-sm">Humidity</div>
+                                <div id="humidity" class="font-semibold text-primary dark:text-white"></div>
                             </div>
-                            <div class="weather-detail">
-                                <div class="text-gray-500 text-sm">Wind</div>
-                                <div id="wind" class="font-semibold"></div>
+                            <div class="weather-detail p-2 rounded dark:bg-gray-700">
+                                <div class="text-gray-500 dark:text-gray-300 text-sm">Wind</div>
+                                <div id="wind" class="font-semibold text-primary dark:text-white"></div>
                             </div>
-                            <div class="weather-detail">
-                                <div class="text-gray-500 text-sm">Pressure</div>
-                                <div id="pressure" class="font-semibold"></div>
+                            <div class="weather-detail p-2 rounded dark:bg-gray-700">
+                                <div class="text-gray-500 dark:text-gray-300 text-sm">Pressure</div>
+                                <div id="pressure" class="font-semibold text-primary dark:text-white"></div>
                             </div>
-                            <div class="weather-detail">
-                                <div class="text-gray-500 text-sm">Precipitation</div>
-                                <div id="precipitation" class="font-semibold"></div>
+                            <div class="weather-detail p-2 rounded dark:bg-gray-700">
+                                <div class="text-gray-500 dark:text-gray-300 text-sm">Precipitation</div>
+                                <div id="precipitation" class="font-semibold text-primary dark:text-white"></div>
                             </div>
-                            <div class="weather-detail">
-                                <div class="text-gray-500 text-sm">UV Index</div>
-                                <div id="uv" class="font-semibold"></div>
+                            <div class="weather-detail p-2 rounded dark:bg-gray-700">
+                                <div class="text-gray-500 dark:text-gray-300 text-sm">UV Index</div>
+                                <div id="uv" class="font-semibold text-primary dark:text-white"></div>
                             </div>
-                            <div class="weather-detail">
-                                <div class="text-gray-500 text-sm">Solar Radiation</div>
-                                <div id="solar" class="font-semibold"></div>
+                            <div class="weather-detail p-2 rounded dark:bg-gray-700">
+                                <div class="text-gray-500 dark:text-gray-300 text-sm">Solar Radiation</div>
+                                <div id="solar" class="font-semibold text-primary dark:text-white"></div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Last Updated -->
-                    <div class="mt-6 text-right text-sm text-gray-500">
+                    <div class="mt-6 text-right text-sm text-gray-500 dark:text-gray-400">
                         <span>Last updated: </span>
                         <span id="last-updated"></span>
                     </div>
@@ -94,12 +119,12 @@
             </div>
             
             <!-- About the Station -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-bold text-primary mb-4">About My Weather Station</h3>
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h3 class="text-xl font-bold text-primary dark:text-white mb-4">About My Weather Station</h3>
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="md:w-1/2">
-                        <p class="mb-4">I operate a Tempest Weather System, which provides accurate, real-time weather data from my location. The system measures:</p>
-                        <ul class="list-disc pl-5 space-y-1 mb-4">
+                        <p class="mb-4 dark:text-gray-300">I operate a Tempest Weather System, which provides accurate, real-time weather data from my location. The system measures:</p>
+                        <ul class="list-disc pl-5 space-y-1 mb-4 dark:text-gray-300">
                             <li>Temperature</li>
                             <li>Humidity</li>
                             <li>Barometric pressure</li>
@@ -108,23 +133,13 @@
                             <li>UV and solar radiation</li>
                             <li>Lightning detection</li>
                         </ul>
-                        <p>Data is updated every few minutes and displayed here in real-time.</p>
+                        <p class="dark:text-gray-300">Data is updated every few minutes and displayed here in real-time.</p>
                     </div>
                     <div class="md:w-1/2">
-                        <!-- Tempest Weather Map Embed 
-                            Customization options:
-                            - zoom: 1-18 (higher number = closer zoom)
-                            - radar: true/false (show precipitation radar)
-                            - satellite: true/false (satellite imagery vs. map)
-                            - windAnimation: true/false (animated wind patterns)
-                            - units: imperial/metric (measurement units)
-                            - darkMode: true/false (dark theme for the map)
-                            - showStationLabels: true/false (show station names)
-                            - showLegend: true/false (show data legend)
-                            - showTimeline: true/false (show time controls)
-                        -->
+                        <!-- Tempest Weather Map Embed -->
                         <div class="rounded-lg shadow-sm overflow-hidden" style="height: 400px;">
                             <iframe 
+                                id="weather-map"
                                 src="https://tempestwx.com/map/134901/41.2321/-87.3425/13?radar=true&satellite=false&windAnimation=true&units=imperial&showStationLabels=false" 
                                 width="100%" 
                                 height="100%" 
@@ -132,7 +147,7 @@
                                 allowfullscreen>
                             </iframe>
                         </div>
-                        <p class="text-sm text-gray-500 mt-2 text-center">Live Tempest Weather Map</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">Live Tempest Weather Map</p>
                     </div>
                 </div>
             </div>
@@ -145,6 +160,66 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const weatherMap = document.getElementById('weather-map');
+
+            // Function to update UI based on current theme
+            function updateThemeUI() {
+                // Check if we're in dark mode
+                if (document.documentElement.classList.contains('dark')) {
+                    // Show sun icon in dark mode (to switch to light)
+                    themeToggleLightIcon.classList.remove('hidden');
+                    themeToggleDarkIcon.classList.add('hidden');
+                    
+                    // Update weather map to dark mode if iframe exists
+                    if (weatherMap) {
+                        const currentSrc = weatherMap.src;
+                        if (currentSrc.includes('darkMode=false') || !currentSrc.includes('darkMode=')) {
+                            weatherMap.src = currentSrc.includes('?') 
+                                ? currentSrc.replace(/(&darkMode=false|$)/, '&darkMode=true') 
+                                : currentSrc + '?darkMode=true';
+                        }
+                    }
+                } else {
+                    // Show moon icon in light mode (to switch to dark)
+                    themeToggleLightIcon.classList.add('hidden');
+                    themeToggleDarkIcon.classList.remove('hidden');
+                    
+                    // Update weather map to light mode if iframe exists
+                    if (weatherMap) {
+                        const currentSrc = weatherMap.src;
+                        if (currentSrc.includes('darkMode=true')) {
+                            weatherMap.src = currentSrc.replace('&darkMode=true', '&darkMode=false');
+                        }
+                    }
+                }
+                
+                // Add dark mode classes to UV index when in dark mode
+                updateUVColors();
+            }
+
+            // Set initial icon state
+            updateThemeUI();
+
+            // Toggle the theme when the button is clicked
+            themeToggleBtn.addEventListener('click', function() {
+                // Toggle dark class
+                document.documentElement.classList.toggle('dark');
+                
+                // Update localStorage based on new state
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                } else {
+                    localStorage.theme = 'light';
+                }
+
+                // Update the UI to match current theme
+                updateThemeUI();
+            });
+            
             // Your Tempest API credentials
             const stationId = '134901';
             const token = 'e938eec3-3816-4bd9-9b8e-3d85d878ca1e';
@@ -158,7 +233,7 @@
                 const loadingIndicator = document.getElementById('loading-indicator');
                 if (!loadingIndicator.classList.contains('hidden')) {
                     loadingIndicator.innerHTML = `
-                        <div class="text-yellow-600">
+                        <div class="text-yellow-600 dark:text-yellow-400">
                             <p>Weather data is taking longer than expected to load.</p>
                             <p class="text-sm mt-2">Please wait a moment...</p>
                         </div>
@@ -180,7 +255,7 @@
                     const loadingIndicator = document.getElementById('loading-indicator');
                     if (!loadingIndicator.classList.contains('hidden')) {
                         loadingIndicator.innerHTML = `
-                            <div class="text-yellow-600">
+                            <div class="text-yellow-600 dark:text-yellow-400">
                                 <p>Weather data refresh is taking longer than expected.</p>
                                 <p class="text-sm mt-2">Please wait a moment...</p>
                             </div>
@@ -217,7 +292,7 @@
                 
                 console.error('Error fetching weather data:', error);
                 document.getElementById('loading-indicator').innerHTML = `
-                    <div class="text-red-500">
+                    <div class="text-red-500 dark:text-red-400">
                         <p>Error loading weather data.</p>
                         <p class="text-sm mt-2">Please try again later.</p>
                     </div>
@@ -284,18 +359,7 @@
             uvElement.textContent = uvValue;
             
             // Apply UV index color classes
-            uvElement.className = 'font-semibold';
-            if (obs.uv < 3) {
-                uvElement.classList.add('uv-low');
-            } else if (obs.uv < 6) {
-                uvElement.classList.add('uv-moderate');
-            } else if (obs.uv < 8) {
-                uvElement.classList.add('uv-high');
-            } else if (obs.uv < 11) {
-                uvElement.classList.add('uv-very-high');
-            } else {
-                uvElement.classList.add('uv-extreme');
-            }
+            updateUVColors(obs.uv);
             
             // Solar Radiation
             document.getElementById('solar').textContent = `${obs.solar_radiation.toFixed(0)} W/m²`;
@@ -310,6 +374,59 @@
             const index = Math.round(((angle %= 360) < 0 ? angle + 360 : angle) / 22.5) % 16;
             return directions[index];
         }
+        
+        function updateUVColors(uvValue) {
+            const uvElement = document.getElementById('uv');
+            if (!uvElement) return;
+            
+            // For when called without a parameter (just for dark mode switch)
+            if (uvValue === undefined) {
+                uvValue = parseFloat(uvElement.textContent);
+            }
+            
+            // Reset classes
+            uvElement.className = 'font-semibold dark:text-white';
+            
+            // Apply UV index color based on value and theme
+            if (document.documentElement.classList.contains('dark')) {
+                if (uvValue < 3) {
+                    uvElement.classList.add('text-green-400');
+                } else if (uvValue < 6) {
+                    uvElement.classList.add('text-yellow-300');
+                } else if (uvValue < 8) {
+                    uvElement.classList.add('text-orange-300');
+                } else if (uvValue < 11) {
+                    uvElement.classList.add('text-red-300');
+                } else {
+                    uvElement.classList.add('text-purple-300');
+                }
+            } else {
+                if (uvValue < 3) {
+                    uvElement.classList.add('text-green-600');
+                } else if (uvValue < 6) {
+                    uvElement.classList.add('text-yellow-600');
+                } else if (uvValue < 8) {
+                    uvElement.classList.add('text-orange-600');
+                } else if (uvValue < 11) {
+                    uvElement.classList.add('text-red-600');
+                } else {
+                    uvElement.classList.add('text-purple-600');
+                }
+            }
+        }
     </script>
+    
+    <!-- Custom styles for weather page in dark mode -->
+    <style>
+        /* Style for the weather map iframe in dark mode */
+        .dark #weather-map {
+            filter: brightness(0.9) contrast(1.1);
+        }
+        
+        /* Dark mode weather icons */
+        .dark .wi {
+            color: #f0f9ff; /* sky-50 */
+        }
+    </style>
 </body>
 </html>
