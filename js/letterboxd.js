@@ -67,22 +67,26 @@ function processMovieItems(items, elementId, limit, url) {
         const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
         const imgUrl = imgMatch ? imgMatch[1] : '';
         
-        // Extract the rating if available
-        const ratingMatch = title.match(/★+/);
-        const rating = ratingMatch ? ratingMatch[0] : '';
+        // Extract the rating if available - using a more precise regex for Letterboxd ratings
+        const ratingRegex = /(★+(?:½)?)\s+/;
+        const ratingMatch = title.match(ratingRegex);
+        const rating = ratingMatch ? ratingMatch[1] : '';
         
-        // Clean the title (remove rating)
-        const cleanTitle = title.replace(/★+\s*/, '');
+        // Clean the title by removing the rating section (stars + half + space)
+        let cleanTitle = title;
+        if (ratingMatch) {
+            cleanTitle = title.replace(ratingMatch[0], '');
+        }
         
         // Create movie card
         const movieCard = document.createElement('div');
         movieCard.className = 'movie-card relative dark:bg-gray-700';
         
-        // Create movie content
+        // Create movie content with the rating displayed as an overlay
         movieCard.innerHTML = `
-            <a href="${link}" target="_blank" class="block">
+            <a href="${link}" target="_blank" class="block relative">
                 <img src="${imgUrl}" alt="${cleanTitle}" class="movie-poster w-full">
-                ${rating ? `<span class="movie-rating">${rating}</span>` : ''}
+                ${rating ? `<span class="movie-rating absolute top-2 right-2 bg-black bg-opacity-70 text-yellow-400 px-1.5 py-0.5 rounded text-sm font-bold">${rating}</span>` : ''}
                 <h4 class="text-sm font-medium mt-2 line-clamp-2">${cleanTitle}</h4>
             </a>
         `;
