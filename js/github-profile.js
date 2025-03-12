@@ -89,13 +89,16 @@ function fetchGitHubRepos() {
                         ${repo.description || 'No description available'}
                     </p>
                     <div class="flex items-center mt-3 text-xs text-gray-500 dark:text-gray-400">
-                        ${repo.language ? `<span class="mr-3">
-                            <span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-                            ${repo.language}
-                        </span>` : ''}
+                        <span class="mr-3">
+                            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #3b82f6; margin-right: 4px;"></span>
+                            ${repo.language || 'Unknown'}
+                        </span>
                         <span>Updated on ${formattedDate}</span>
                     </div>
                 `;
+                
+                // Log for debugging
+                console.log('Repo language:', repo.language);
                 
                 reposContainer.appendChild(card);
             });
