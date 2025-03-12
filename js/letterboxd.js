@@ -58,25 +58,52 @@ function processMovieItems(items, elementId, limit, url) {
         return;
     }
     
-    itemsToShow.forEach(item => {
-        const title = item.querySelector('title').textContent;
+    // For debugging
+    console.log("Processing items:", itemsToShow.length);
+    
+    itemsToShow.forEach((item, index) => {
+        // Get the raw title text which may include rating stars
+        const rawTitle = item.querySelector('title').textContent;
         const link = item.querySelector('link').textContent;
         const description = item.querySelector('description').textContent;
+        
+        // For debugging
+        console.log(`Item ${index} raw title:`, rawTitle);
         
         // Extract the image URL from the description
         const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
         const imgUrl = imgMatch ? imgMatch[1] : '';
         
-        // Extract the rating if available - using a more precise regex for Letterboxd ratings
-        const ratingRegex = /(★+(?:½)?)\s+/;
-        const ratingMatch = title.match(ratingRegex);
-        const rating = ratingMatch ? ratingMatch[1] : '';
+        // Process the title to extract the rating and clean the title
+        let rating = '';
+        let cleanTitle = rawTitle;
         
-        // Clean the title by removing the rating section (stars + half + space)
-        let cleanTitle = title;
-        if (ratingMatch) {
-            cleanTitle = title.replace(ratingMatch[0], '');
+        // UPDATED APPROACH based on actual format
+
+        // Pattern 1: "Film Title, Year - ★★★½" (rating at the end after a dash)
+        const endRatingPattern = /(.+)\s+-\s+(★+(?:½)?)$/;
+        const endRatingMatch = rawTitle.match(endRatingPattern);
+        
+        if (endRatingMatch) {
+            cleanTitle = endRatingMatch[1].trim(); // The title part
+            rating = endRatingMatch[2].trim(); // The stars
+            console.log(`Found end rating pattern - Title: "${cleanTitle}", Rating: "${rating}"`);
+        } else {
+            // Pattern 2: "Username watched Film Title" (no rating)
+            const watchedPattern = /^([^(]+) watched (.+?)(?:\s+-\s+Letterboxd)?$/;
+            const watchedMatch = rawTitle.match(watchedPattern);
+            
+            if (watchedMatch) {
+                cleanTitle = watchedMatch[2].trim(); // The title part
+                console.log(`Found watched pattern - Title: "${cleanTitle}"`);
+            } else {
+                // Pattern 3: Just try to remove "- Letterboxd" suffix if present
+                cleanTitle = rawTitle.replace(/\s+\-\s+Letterboxd$/, '').trim();
+            }
         }
+        
+        // For debugging
+        console.log(`Final clean title: "${cleanTitle}", Rating: "${rating}"`);
         
         // Create movie card
         const movieCard = document.createElement('div');
@@ -86,7 +113,7 @@ function processMovieItems(items, elementId, limit, url) {
         movieCard.innerHTML = `
             <a href="${link}" target="_blank" class="block relative">
                 <img src="${imgUrl}" alt="${cleanTitle}" class="movie-poster w-full">
-                ${rating ? `<span class="movie-rating absolute top-2 right-2 bg-black bg-opacity-70 text-yellow-400 px-1.5 py-0.5 rounded text-sm font-bold">${rating}</span>` : ''}
+                ${rating ? `<span class="movie-rating absolute top-2 right-2 bg-black bg-opacity-70 text-yellow-400 px-2 py-0.5 rounded text-sm font-bold">${rating}</span>` : ''}
                 <h4 class="text-sm font-medium mt-2 line-clamp-2">${cleanTitle}</h4>
             </a>
         `;
