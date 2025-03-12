@@ -11,8 +11,6 @@
     
     <title>Projects - Effland.net</title>
     <link rel="stylesheet" href="../dist/output.css">
-    <!-- GitHub Calendar CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css">
     
     <!-- Dark mode script -->
     <script>
@@ -24,6 +22,9 @@
             document.documentElement.classList.remove('dark');
         }
     </script>
+    
+    <!-- Theme toggle functionality -->
+    <script src="../js/theme-toggle.js"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-background dark:bg-gray-900 dark:text-white transition-colors duration-200">
     <header class="bg-primary text-white py-8 text-center relative">
@@ -53,55 +54,49 @@
         </nav>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 py-8 flex-1 dark:bg-gray-900">
-        <!-- GitHub Activity Section -->
-        <section id="github-activity" class="mb-12">
-            <h2 class="text-2xl font-bold mb-4 dark:text-white">GitHub Activity</h2>
-            <p class="mb-6 text-text dark:text-gray-300">Check out my contribution activity on GitHub:</p>
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-1 dark:bg-gray-900">
+        <!-- GitHub activity section - simplified approach -->
+        <section class="bg-white p-6 rounded-lg shadow-md mb-8 dark:bg-gray-800">
+            <h2 class="text-2xl font-bold text-primary dark:text-white mb-4">GitHub Activity</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">My open source contributions:</p>
             
-            <!-- GitHub Calendar Container -->
-            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
-                <div class="calendar mb-4">
-                    <!-- GitHub Calendar will be loaded here -->
-                    <div class="text-center text-gray-500 dark:text-gray-400">Loading GitHub contribution data...</div>
-                </div>
-                <div class="text-center">
-                    <a href="https://github.com/seffland" 
-                       target="_blank"
-                       class="inline-flex items-center gap-2 text-secondary hover:text-secondary-dark">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-                        </svg>
-                        View my full GitHub profile
-                    </a>
-                </div>
+            <div class="text-center mb-6">
+                <a href="https://github.com/seffland" target="_blank" class="inline-flex items-center gap-2 bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-md transition-colors">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View my GitHub profile
+                </a>
             </div>
-        </section>
-
-        <section id="projects">
-            <h2 class="text-2xl font-bold mb-4 dark:text-white">Projects</h2>
-            <p class="mb-8 text-text dark:text-gray-300">Here are some of my recent projects:</p>
             
-            <div class="grid gap-6">
-                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow dark:bg-gray-800">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-xl font-bold text-primary dark:text-white">effland.net</h3>
-                        <a href="https://github.com/seffland/effland.net" 
-                           target="_blank"
-                           class="inline-flex items-center gap-2 text-secondary hover:text-secondary-dark">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-                            </svg>
-                            View on GitHub
-                        </a>
-                    </div>
-                    <p class="text-text dark:text-gray-300 mb-4">This is the website you are currently on. Built with modern web technologies including HTML5, Tailwind CSS, and JavaScript.</p>
-                    <div class="flex gap-2 flex-wrap">
-                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm dark:bg-secondary/20">HTML5</span>
-                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm dark:bg-secondary/20">Tailwind CSS</span>
-                        <span class="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-sm dark:bg-secondary/20">JavaScript</span>
-                    </div>
+            <!-- GitHub contribution image using GitHub's own contribution graph endpoint -->
+            <div class="github-contributions-container">
+                <h3 class="text-lg font-medium text-primary dark:text-white mb-4">Contribution Graph</h3>
+                <div class="bg-gray-100 p-4 rounded-lg dark:bg-gray-700 flex justify-center">
+                    <img 
+                        id="github-contributions" 
+                        src="https://ghchart.rshah.org/seffland" 
+                        alt="GitHub Contributions" 
+                        class="max-w-full h-auto" 
+                        style="filter: brightness(1) contrast(1);"
+                    >
                 </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
+                    Chart showing GitHub contributions over the past year
+                </p>
+            </div>
+            
+            <!-- Recent repositories -->
+            <div class="mt-8" id="recent-repos">
+                <h3 class="text-lg font-medium text-primary dark:text-white mb-4">Recent Repositories</h3>
+                <div class="loading-spinner text-center py-8" id="repos-loading">
+                    <svg class="animate-spin h-8 w-8 mx-auto text-primary dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">Loading repositories...</p>
+                </div>
+                <div id="repos-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
         </section>
     </main>
@@ -110,31 +105,107 @@
         <p>&copy; 2025 Effland.net. All rights reserved.</p>
     </footer>
 
-    <!-- GitHub Calendar JavaScript -->
-    <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script>
-    
-    <!-- Replace the theme toggle script in other pages -->
-    <script src="../js/theme-toggle.js"></script>
-    
-    <!-- Custom styles for GitHub calendar in dark mode -->
-    <style>
-        /* Dark mode styles for GitHub calendar */
-        .dark .calendar {
-            color: #e5e7eb;
-        }
-        
-        .dark .calendar h2 {
-            color: #f3f4f6;
-        }
-        
-        .dark .calendar-graph text.month,
-        .dark .calendar-graph text.wday {
-            fill: #9ca3af;
-        }
-        
-        .dark rect.day {
-            stroke: #374151;
-        }
-    </style>
+    <!-- Custom script for GitHub data -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply dark mode to GitHub contribution graph if needed
+            applyDarkModeToContributionsGraph();
+            
+            // Listen for theme changes to update the graph
+            document.getElementById('theme-toggle').addEventListener('click', function() {
+                // Wait briefly for the theme to change before updating
+                setTimeout(applyDarkModeToContributionsGraph, 100);
+            });
+            
+            // Fetch GitHub repositories
+            fetchGitHubRepos();
+            
+            // Function to apply dark mode to contributions graph
+            function applyDarkModeToContributionsGraph() {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const contributionsImg = document.getElementById('github-contributions');
+                
+                if (isDarkMode) {
+                    // In dark mode, invert the colors and adjust brightness for better visibility
+                    contributionsImg.style.filter = 'invert(0.85) hue-rotate(180deg) brightness(1.5) contrast(1.2)';
+                } else {
+                    // In light mode, use normal colors
+                    contributionsImg.style.filter = 'brightness(1) contrast(1)';
+                }
+            }
+            
+            // Function to fetch GitHub repositories
+            function fetchGitHubRepos() {
+                fetch('https://api.github.com/users/seffland/repos?sort=updated&per_page=4')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('GitHub API request failed');
+                        }
+                        return response.json();
+                    })
+                    .then(repos => {
+                        // Hide loading spinner
+                        document.getElementById('repos-loading').style.display = 'none';
+                        
+                        // Show repositories
+                        const reposContainer = document.getElementById('repos-list');
+                        
+                        if (repos.length === 0) {
+                            reposContainer.innerHTML = `
+                                <div class="col-span-full text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                                    <p class="text-gray-600 dark:text-gray-400">No public repositories found.</p>
+                                </div>
+                            `;
+                            return;
+                        }
+                        
+                        repos.forEach(repo => {
+                            // Create card for each repository
+                            const card = document.createElement('div');
+                            card.className = 'bg-gray-100 dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow';
+                            
+                            // Format date
+                            const updatedDate = new Date(repo.updated_at);
+                            const formattedDate = updatedDate.toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'short', 
+                                day: 'numeric' 
+                            });
+                            
+                            card.innerHTML = `
+                                <h4 class="font-medium text-primary dark:text-white">
+                                    <a href="${repo.html_url}" target="_blank" class="hover:underline">
+                                        ${repo.name}
+                                    </a>
+                                </h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
+                                    ${repo.description || 'No description available'}
+                                </p>
+                                <div class="flex items-center mt-3 text-xs text-gray-500 dark:text-gray-400">
+                                    ${repo.language ? `<span class="mr-3">
+                                        <span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                                        ${repo.language}
+                                    </span>` : ''}
+                                    <span>Updated on ${formattedDate}</span>
+                                </div>
+                            `;
+                            
+                            reposContainer.appendChild(card);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching GitHub repos:', error);
+                        document.getElementById('repos-loading').style.display = 'none';
+                        document.getElementById('repos-list').innerHTML = `
+                            <div class="col-span-full text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                                <p class="text-red-500 dark:text-red-400">
+                                    Unable to load repositories. Please try again later.
+                                </p>
+                            </div>
+                        `;
+                    });
+            }
+        });
+    </script>
 </body>
 </html>

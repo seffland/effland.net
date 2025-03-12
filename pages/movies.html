@@ -127,13 +127,24 @@
 
     <!-- Add dark mode styles for movie cards -->
     <style>
+        /* Base styles for all movie cards */
+        .movie-card h4 {
+            color: #1f2937; /* gray-800 - for light mode */
+        }
+        
+        /* Base styles for all movie ratings */
+        .movie-rating {
+            color: #f59e0b; /* amber-500 - for light mode */
+            background-color: rgba(0, 0, 0, 0.75);
+        }
+        
+        /* Dark mode overrides */
         .dark .movie-card h4 {
             color: #f3f4f6; /* text-gray-100 */
         }
         
-        /* In dark mode, we want the rating to stand out more against dark backgrounds */
         .dark .movie-rating {
-            color: #fcd34d; /* amber-300 */
+            color: #fcd34d; /* amber-300 - slightly lighter in dark mode */
             background-color: rgba(0, 0, 0, 0.8);
         }
     </style>
