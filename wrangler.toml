@@ -1,0 +1,16 @@
+name = "database-api"
+main = "workers/database.js"
+compatibility_date = "2023-10-02"
+
+# Configure environment variables
+[vars]
+# Variables for local development only (override in Cloudflare dashboard)
+# Don't put actual secrets here
+
+# Define secret variables (set with wrangler secret)
+# [secrets]
+# DATABASE_URL
+
+[[routes]]
+pattern = "effland.net/api/database/*"
+zone_name = "effland.net"
