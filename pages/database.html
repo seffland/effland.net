@@ -1,111 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Dashboard | Effland.net</title>
-    <link href="../dist/output.css" rel="stylesheet">
+    <meta name="description" content="Database Dashboard - Effland.net">
+    <title>Database Dashboard - Effland.net</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="../favicon.ico" type="image/x-icon">
+    
+    <link rel="stylesheet" href="../dist/output.css">
+    
+    <!-- Dark mode initialization script -->
+    <script>
+        // Check for saved theme preference or prefer-color-scheme
+        if (localStorage.theme === 'dark' || 
+           (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    
+    <!-- Theme toggle functionality -->
+    <script src="../js/theme-toggle.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col font-sans">
-    <!-- Header with gradient background -->
-    <header class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-4 shadow-md">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <h1 class="text-2xl font-bold">Effland.net</h1>
-            <nav class="flex flex-wrap space-x-2 md:space-x-6 mt-4 md:mt-0">
-                <a href="../index.html" class="py-1 px-2 hover:bg-indigo-700 rounded transition">Home</a>
-                <a href="projects.html" class="py-1 px-2 hover:bg-indigo-700 rounded transition">Projects</a>
-                <a href="movies.html" class="py-1 px-2 hover:bg-indigo-700 rounded transition">Movies</a>
-                <a href="weather.html" class="py-1 px-2 hover:bg-indigo-700 rounded transition">Weather</a>
-                <a href="database.html" class="py-1 px-2 bg-indigo-700 rounded font-medium">Database</a>
-                <a href="contact.html" class="py-1 px-2 hover:bg-indigo-700 rounded transition">Contact</a>
-            </nav>
+<body class="min-h-screen flex flex-col bg-background dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <header class="bg-primary text-white py-8 text-center relative">
+        <!-- Theme toggle button -->
+        <div class="absolute right-4 top-4">
+            <button id="theme-toggle" type="button" class="text-gray-200 hover:text-white p-2 rounded-lg text-sm">
+                <!-- Sun icon -->
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                </svg>
+                <!-- Moon icon -->
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                </svg>
+            </button>
         </div>
+        
+        <h1 class="text-3xl font-bold mb-4">Database Dashboard</h1>
+        <nav>
+            <ul class="space-x-4">
+                <li class="inline-block"><a href="../index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
+                <li class="inline-block"><a href="projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
+                <li class="inline-block"><a href="weather.html" class="text-white hover:text-secondary transition-colors">Weather</a></li>
+                <li class="inline-block"><a href="movies.html" class="text-white hover:text-secondary transition-colors">Movies</a></li>
+                <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="container mx-auto px-4 py-6 flex-grow">
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-1 dark:bg-gray-900">
         <section class="mb-8">
-            <h2 class="text-3xl font-bold mb-2 text-indigo-700">Database Dashboard</h2>
-            <p class="text-gray-600 mb-6 max-w-3xl">
+            <h2 class="text-2xl font-bold mb-4 text-primary dark:text-white">Database Dashboard</h2>
+            <p class="mb-6 text-text dark:text-gray-300">
                 This dashboard connects to my Neon PostgreSQL database through Cloudflare Workers.
                 The database connection is secured and managed via environment variables.
             </p>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-xl font-semibold mb-4 text-indigo-600">Database Status</h3>
-            <div class="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300">
+            <h3 class="text-xl font-bold mb-4 text-primary dark:text-white">Database Status</h3>
+            <div class="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
                 <div id="db-status" class="flex items-center">
-                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <p>Checking database connection...</p>
+                    <div class="animate-spin mr-3 h-5 w-5 text-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                    <p class="dark:text-gray-300">Checking database connection...</p>
                 </div>
             </div>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-xl font-semibold mb-4 text-indigo-600">Table Explorer</h3>
+            <h3 class="text-xl font-bold mb-4 text-primary dark:text-white">Table Explorer</h3>
             <div class="mb-4">
-                <select id="table-selector" class="p-2 border border-gray-300 rounded-md w-full md:w-auto bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <select id="table-selector" class="p-2 border border-gray-300 rounded-md w-full md:w-auto bg-white focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     <option value="">Select a table</option>
                 </select>
             </div>
             
-            <div id="table-container" class="overflow-x-auto bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300 hidden">
+            <div id="table-container" class="overflow-x-auto bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 hidden">
                 <div class="flex items-center mb-4">
-                    <h4 id="table-name" class="text-lg font-medium text-indigo-700"></h4>
-                    <svg id="table-loading" class="animate-spin ml-2 h-5 w-5 text-indigo-600 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <h4 id="table-name" class="text-lg font-medium text-primary dark:text-white"></h4>
+                    <div id="table-loading" class="animate-spin ml-2 h-5 w-5 text-secondary hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
                 </div>
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead id="table-header" class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead id="table-header" class="bg-gray-50 dark:bg-gray-700">
                         <!-- Table headers will be inserted here -->
                     </thead>
-                    <tbody id="table-body" class="bg-white divide-y divide-gray-200">
+                    <tbody id="table-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700 dark:text-gray-300">
                         <!-- Table data will be inserted here -->
                     </tbody>
                 </table>
                 <div id="no-data" class="py-12 text-center hidden">
-                    <p class="text-gray-500">No data available in this table</p>
+                    <p class="text-gray-500 dark:text-gray-400">No data available in this table</p>
                 </div>
             </div>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-xl font-semibold mb-4 text-indigo-600">Database Query</h3>
-            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300">
+            <h3 class="text-xl font-bold mb-4 text-primary dark:text-white">Database Query</h3>
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
                 <div class="mb-4">
-                    <textarea id="sql-query" rows="4" class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+                    <textarea id="sql-query" rows="4" class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
                         placeholder="Enter SQL query (SELECT statements only)"></textarea>
                 </div>
                 <div class="flex justify-between items-center">
-                    <button id="execute-btn" class="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    <button id="execute-btn" class="bg-secondary text-white px-5 py-2 rounded-md hover:bg-secondary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-secondary">
                         Execute Query
                     </button>
                     <div id="query-loading" class="hidden flex items-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Running query...</span>
+                        <div class="animate-spin mr-3 h-5 w-5 text-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        <span class="dark:text-gray-300">Running query...</span>
                     </div>
                 </div>
                 <div id="query-result" class="mt-6 hidden">
-                    <h4 class="font-medium mb-3 text-indigo-700">Results:</h4>
+                    <h4 class="font-medium mb-3 text-primary dark:text-white">Results:</h4>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead id="query-header" class="bg-gray-50">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead id="query-header" class="bg-gray-50 dark:bg-gray-700">
                                 <!-- Query result headers will be inserted here -->
                             </thead>
-                            <tbody id="query-body" class="bg-white divide-y divide-gray-200">
+                            <tbody id="query-body" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700 dark:text-gray-300">
                                 <!-- Query result data will be inserted here -->
                             </tbody>
                         </table>
                     </div>
-                    <div id="query-error" class="mt-4 p-4 bg-red-50 text-red-800 rounded-md border border-red-200 hidden">
+                    <div id="query-error" class="mt-4 p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800 hidden">
                         <!-- Error messages will appear here -->
                     </div>
                 </div>
@@ -113,10 +151,8 @@
         </section>
     </main>
 
-    <footer class="bg-gray-800 text-white p-6 mt-auto">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2025 Effland.net. All rights reserved.</p>
-        </div>
+    <footer class="bg-primary text-white text-center py-4 mt-auto">
+        <p>&copy; 2025 Effland.net. All rights reserved.</p>
     </footer>
 
     <!-- External JavaScript file -->
