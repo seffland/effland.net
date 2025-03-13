@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Dashboard | Effland.net</title>
+    <link href="../dist/output.css" rel="stylesheet">
+    <style>
+        .loading {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(100, 116, 139, 0.3);
+            border-radius: 50%;
+            border-top-color: #6366f1;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+    <header class="bg-indigo-600 text-white p-4 shadow-md">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold">Effland.net</h1>
+            <nav class="flex space-x-4 mt-4 md:mt-0">
+                <a href="../index.html" class="hover:text-indigo-200 transition">Home</a>
+                <a href="projects.html" class="hover:text-indigo-200 transition">Projects</a>
+                <a href="movies.html" class="hover:text-indigo-200 transition">Movies</a>
+                <a href="weather.html" class="hover:text-indigo-200 transition">Weather</a>
+                <a href="database.html" class="font-bold underline hover:text-indigo-200 transition">Database</a>
+                <a href="contact.html" class="hover:text-indigo-200 transition">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 flex-grow">
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Database Dashboard</h2>
+            <p class="mb-6">
+                This dashboard connects to my Neon PostgreSQL database through Cloudflare Workers.
+                The database connection is secured and managed via environment variables.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Database Status</h3>
+            <div class="p-4 bg-white rounded-lg shadow-md">
+                <div id="db-status" class="flex items-center">
+                    <span class="loading mr-2"></span>
+                    <p>Checking database connection...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Table Explorer</h3>
+            <div class="mb-4">
+                <select id="table-selector" class="p-2 border rounded-md w-full md:w-auto bg-white">
+                    <option value="">Select a table</option>
+                </select>
+            </div>
+            
+            <div id="table-container" class="overflow-x-auto bg-white rounded-lg shadow-md p-4 hidden">
+                <div class="flex items-center mb-4">
+                    <h4 id="table-name" class="text-lg font-medium"></h4>
+                    <span id="table-loading" class="loading ml-2 hidden"></span>
+                </div>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead id="table-header" class="bg-gray-50">
+                        <!-- Table headers will be inserted here -->
+                    </thead>
+                    <tbody id="table-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Table data will be inserted here -->
+                    </tbody>
+                </table>
+                <div id="no-data" class="py-12 text-center hidden">
+                    <p class="text-gray-500">No data available in this table</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-semibold mb-4">Database Query</h3>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div class="mb-4">
+                    <textarea id="sql-query" rows="4" class="w-full p-2 border rounded-md font-mono text-sm" 
+                        placeholder="Enter SQL query (SELECT statements only)"></textarea>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button id="execute-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                        Execute Query
+                    </button>
+                    <div id="query-loading" class="hidden">
+                        <span class="loading mr-2"></span>
+                        <span>Running query...</span>
+                    </div>
+                </div>
+                <div id="query-result" class="mt-4 hidden">
+                    <h4 class="font-medium mb-2">Results:</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead id="query-header" class="bg-gray-50">
+                                <!-- Query result headers will be inserted here -->
+                            </thead>
+                            <tbody id="query-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Query result data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="query-error" class="mt-4 p-3 bg-red-100 text-red-800 rounded-md hidden">
+                        <!-- Error messages will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 Effland.net. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_ENDPOINT = '/api/database'; // This will be your Cloudflare Worker endpoint
+            const dbStatus = document.getElementById('db-status');
+            const tableSelector = document.getElementById('table-selector');
+            const tableContainer = document.getElementById('table-container');
+            const tableName = document.getElementById('table-name');
+            const tableHeader = document.getElementById('table-header');
+            const tableBody = document.getElementById('table-body');
+            const tableLoading = document.getElementById('table-loading');
+            const noData = document.getElementById('no-data');
+            const sqlQuery = document.getElementById('sql-query');
+            const executeBtn = document.getElementById('execute-btn');
+            const queryLoading = document.getElementById('query-loading');
+            const queryResult = document.getElementById('query-result');
+            const queryHeader = document.getElementById('query-header');
+            const queryBody = document.getElementById('query-body');
+            const queryError = document.getElementById('query-error');
+
+            // Check database connection
+            fetch(`${API_ENDPOINT}/status`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.connected) {
+                        dbStatus.innerHTML = `
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                                <p>Connected to database</p>
+                            </div>
+                        `;
+                        loadTablesList();
+                    } else {
+                        dbStatus.innerHTML = `
+                            <div class="flex items-center">
+                                <span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                                <p>Database connection failed: ${data.error || 'Unknown error'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    dbStatus.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                            <p>API Endpoint Error: ${error.message}</p>
+                        </div>
+                    `;
+                });
+
+            // Load tables list
+            function loadTablesList() {
+                fetch(`${API_ENDPOINT}/tables`)
+                    .then(response => response.json())
+                    .then(data => {
+                        tableSelector.innerHTML = '<option value="">Select a table</option>';
+                        data.tables.forEach(table => {
+                            const option = document.createElement('option');
+                            option.value = table;
+                            option.textContent = table;
+                            tableSelector.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading tables:', error);
+                    });
+            }
+
+            // Load table data when a table is selected
+            tableSelector.addEventListener('change', function() {
+                const selectedTable = this.value;
+                if (!selectedTable) {
+                    tableContainer.classList.add('hidden');
+                    return;
+                }
+
+                tableName.textContent = selectedTable;
+                tableLoading.classList.remove('hidden');
+                tableContainer.classList.remove('hidden');
+                noData.classList.add('hidden');
+
+                fetch(`${API_ENDPOINT}/table/${selectedTable}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        tableLoading.classList.add('hidden');
+                        
+                        if (data.error) {
+                            noData.textContent = data.error;
+                            noData.classList.remove('hidden');
+                            tableHeader.innerHTML = '';
+                            tableBody.innerHTML = '';
+                            return;
+                        }
+
+                        if (data.rows && data.rows.length > 0) {
+                            // Create table header
+                            const columns = Object.keys(data.rows[0]);
+                            tableHeader.innerHTML = `
+                                <tr>
+                                    ${columns.map(col => `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${col}</th>`).join('')}
+                                </tr>
+                            `;
+
+                            // Create table body
+                            tableBody.innerHTML = data.rows.map(row => `
+                                <tr>
+                                    ${columns.map(col => `<td class="px-6 py-4 whitespace-nowrap text-sm">${row[col] !== null ? row[col] : '<span class="text-gray-400">null</span>'}</td>`).join('')}
+                                </tr>
+                            `).join('');
+                        } else {
+                            noData.textContent = 'No data available in this table';
+                            noData.classList.remove('hidden');
+                            tableHeader.innerHTML = '';
+                            tableBody.innerHTML = '';
+                        }
+                    })
+                    .catch(error => {
+                        tableLoading.classList.add('hidden');
+                        noData.textContent = `Error loading table data: ${error.message}`;
+                        noData.classList.remove('hidden');
+                        tableHeader.innerHTML = '';
+                        tableBody.innerHTML = '';
+                    });
+            });
+
+            // Execute custom SQL query
+            executeBtn.addEventListener('click', function() {
+                const query = sqlQuery.value.trim();
+                if (!query) return;
+
+                // Only allow SELECT statements for security
+                if (!query.toLowerCase().startsWith('select')) {
+                    queryError.textContent = 'Only SELECT statements are allowed for security reasons';
+                    queryError.classList.remove('hidden');
+                    queryResult.classList.remove('hidden');
+                    return;
+                }
+
+                queryLoading.classList.remove('hidden');
+                queryError.classList.add('hidden');
+                queryHeader.innerHTML = '';
+                queryBody.innerHTML = '';
+
+                fetch(`${API_ENDPOINT}/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        queryLoading.classList.add('hidden');
+                        queryResult.classList.remove('hidden');
+
+                        if (data.error) {
+                            queryError.textContent = data.error;
+                            queryError.classList.remove('hidden');
+                            return;
+                        }
+
+                        if (data.rows && data.rows.length > 0) {
+                            // Create query result header
+                            const columns = Object.keys(data.rows[0]);
+                            queryHeader.innerHTML = `
+                                <tr>
+                                    ${columns.map(col => `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${col}</th>`).join('')}
+                                </tr>
+                            `;
+
+                            // Create query result body
+                            queryBody.innerHTML = data.rows.map(row => `
+                                <tr>
+                                    ${columns.map(col => `<td class="px-6 py-4 whitespace-nowrap text-sm">${row[col] !== null ? row[col] : '<span class="text-gray-400">null</span>'}</td>`).join('')}
+                                </tr>
+                            `).join('');
+                        } else {
+                            queryError.textContent = 'Query returned no results';
+                            queryError.classList.remove('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        queryLoading.classList.add('hidden');
+                        queryResult.classList.remove('hidden');
+                        queryError.textContent = `Error executing query: ${error.message}`;
+                        queryError.classList.remove('hidden');
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
