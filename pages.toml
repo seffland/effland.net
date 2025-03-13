@@ -1,0 +1,2 @@
+# Pages configuration
+pages_build_output_dir = "."
