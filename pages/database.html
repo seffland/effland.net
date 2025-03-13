@@ -149,7 +149,14 @@
 
             // Check database connection
             fetch(`${API_ENDPOINT}/status`)
-                .then(response => response.json())
+                .then(async response => {
+                    if (!response.ok) {
+                        // If response isn't OK, try to read the text content
+                        const text = await response.text();
+                        throw new Error(`Server responded with ${response.status}: ${text}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.connected) {
                         dbStatus.innerHTML = `
