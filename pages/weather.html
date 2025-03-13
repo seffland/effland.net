@@ -24,6 +24,7 @@
             document.documentElement.classList.remove('dark');
         }
     </script>
+    <script src="../js/navigation.js"></script> <!-- For pages in the pages directory -->
 </head>
 <body class="min-h-screen flex flex-col bg-background dark:bg-gray-900 dark:text-white transition-colors duration-200">
     <header class="bg-primary text-white py-8 text-center relative">
@@ -42,14 +43,18 @@
         </div>
         
         <h1 class="text-3xl font-bold mb-4">Weather Dashboard</h1>
-        <nav>
-            <ul class="space-x-4">
-                <li class="inline-block"><a href="../index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
-                <li class="inline-block"><a href="projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
-                <li class="inline-block"><a href="weather.html" class="text-white hover:text-secondary transition-colors">Weather</a></li>
-                <li class="inline-block"><a href="movies.html" class="text-white hover:text-secondary transition-colors">Movies</a></li>
-                <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
-            </ul>
+        <nav id="main-nav">
+            <!-- Navigation will be populated by JavaScript -->
+            <noscript>
+                <ul class="space-x-4">
+                    <li class="inline-block"><a href="../index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
+                    <li class="inline-block"><a href="projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
+                    <li class="inline-block"><a href="weather.html" class="text-white hover:text-secondary transition-colors">Weather</a></li>
+                    <li class="inline-block"><a href="movies.html" class="text-white hover:text-secondary transition-colors">Movies</a></li>
+                    <li class="inline-block"><a href="database.html" class="text-white hover:text-secondary transition-colors">Database</a></li>
+                    <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
+                </ul>
+            </noscript>
         </nav>
     </header>
 

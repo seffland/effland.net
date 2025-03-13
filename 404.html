@@ -6,18 +6,23 @@
     <meta name="description" content="Page Not Found - Effland.net">
     <title>Page Not Found - Effland.net</title>
     <link rel="stylesheet" href="dist/output.css">
+    <script src="js/navigation.js"></script> <!-- For index.html -->
 </head>
 <body class="min-h-screen flex flex-col bg-background">
     <header class="bg-primary text-white py-8 text-center">
         <h1 class="text-4xl font-bold mb-2">Effland.net</h1>
-        <nav>
-            <ul class="space-x-4">
-                <li class="inline-block"><a href="index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
-                <li class="inline-block"><a href="pages/projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
-                <li class="inline-block"><a href="pages/weather.html" class="text-white hover:text-secondary transition-colors">Weather</a></li>
-                <li class="inline-block"><a href="pages/movies.html" class="text-white hover:text-secondary transition-colors">Movies</a></li>
-                <li class="inline-block"><a href="pages/contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
-            </ul>
+        <nav id="main-nav">
+            <!-- Navigation will be populated by JavaScript -->
+            <noscript>
+                <ul class="space-x-4">
+                    <li class="inline-block"><a href="../index.html" class="text-white hover:text-secondary transition-colors">Home</a></li>
+                    <li class="inline-block"><a href="projects.html" class="text-white hover:text-secondary transition-colors">Projects</a></li>
+                    <li class="inline-block"><a href="weather.html" class="text-white hover:text-secondary transition-colors">Weather</a></li>
+                    <li class="inline-block"><a href="movies.html" class="text-white hover:text-secondary transition-colors">Movies</a></li>
+                    <li class="inline-block"><a href="database.html" class="text-white hover:text-secondary transition-colors">Database</a></li>
+                    <li class="inline-block"><a href="contact.html" class="text-white hover:text-secondary transition-colors">Contact</a></li>
+                </ul>
+            </noscript>
         </nav>
     </header>
 
