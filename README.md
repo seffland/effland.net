@@ -9,21 +9,35 @@ effland.net/
 ├── dist/                  # Compiled assets
 │   └── output.css         # Compiled Tailwind CSS
 ├── pages/                 # HTML pages
-│   ├── contact.html
-│   ├── movies.html
-│   ├── projects.html
-│   └── weather.html
+│   ├── contact.html       # Contact information
+│   ├── movies.html        # Movie recommendations and reviews
+│   ├── projects.html      # Portfolio of development projects
+│   └── weather.html       # Weather dashboard
 ├── src/                   # Source files
 │   ├── css/               # CSS files
 │   │   ├── fallback.css   # Fallback CSS
 │   │   └── movies.css     # Movie-specific styles
 │   ├── js/                # JavaScript files
+│   │   ├── github.js      # GitHub contributions calendar
+│   │   └── weather.js     # Weather data fetching and display
 │   └── input.css          # Tailwind CSS source
+├── .env                   # Environment variables (not tracked by Git)
+├── .gitignore             # Git ignore rules
+├── github-proxy.js        # Local proxy for GitHub API
 ├── index.html             # Homepage
 ├── package.json           # Project dependencies
+├── package-lock.json      # Dependency lock file
 ├── tailwind.config.js     # Tailwind configuration
 └── README.md              # Project documentation
 ```
+
+## Features
+
+- Responsive design using Tailwind CSS
+- GitHub contribution calendar on Projects page
+- Weather data integration with OpenWeatherMap API
+- Contact form with form validation
+- Movie recommendations with filtering and sorting
 
 ## GitHub Calendar Setup
 
@@ -71,6 +85,17 @@ npm run dev
 npm run build
 ```
 
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+WEATHER_API_KEY=your_openweathermap_api_key
+GITHUB_USERNAME=your_github_username
+```
+
+The `.env` file is excluded from Git to keep sensitive information private.
+
 ## License
 
 © 2025 Effland.net. All rights reserved.
@@ -100,7 +125,7 @@ This site is configured to deploy automatically to Cloudflare Pages. Here are th
 ### Important Notes
 - The `dist/output.css` file is tracked in Git and needed for deployment
 - Node modules are excluded from Git but installed during build
-- Environment variables can be configured in Cloudflare Pages dashboard if needed
+- Environment variables should be configured in Cloudflare Pages dashboard
 
 ## Local Development vs Production
 - Development: Uses watch mode (`npm run dev`)
@@ -110,4 +135,4 @@ This site is configured to deploy automatically to Cloudflare Pages. Here are th
 If the site isn't styling properly after deployment:
 1. Check that `dist/output.css` is present in the repository
 2. Verify the build command completed successfully in Cloudflare Pages logs
-3. Ensure all HTML files reference the correct CSS path: `href="dist/output.css"` 
+3. Ensure all HTML files reference the correct CSS path: `href="dist/output.css"`
