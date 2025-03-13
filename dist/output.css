@@ -744,6 +744,10 @@ body {
   height: auto;
 }
 
+.h-24 {
+  height: 6rem;
+}
+
 .min-h-\[120px\] {
   min-height: 120px;
 }
@@ -782,6 +786,10 @@ body {
 
 .w-full {
   width: 100%;
+}
+
+.w-24 {
+  width: 6rem;
 }
 
 .min-w-full {

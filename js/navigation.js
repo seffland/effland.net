@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const navElement = document.getElementById('main-nav');
     if (!navElement) return;
     
+    // Check if we're on a 404 page
+    const is404Page = window.location.pathname.includes('404.html');
+    
+    // Check if we're in local environment
+    const isLocalhost = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.protocol === 'file:';
+    
     // Define all pages with their properties
     const pages = [
         { id: 'home', title: 'Home', path: 'index.html', root: true },
@@ -16,7 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentPath = window.location.pathname.toLowerCase();
     
     // Check if we're in the root directory or in the pages directory
-    const isInPagesDirectory = currentPath.includes('/pages/');
+    const isInPagesDirectory = currentPath.includes('/pages/') || 
+                               (isLocalhost && currentPath.includes('pages'));
     
     // Create the navigation HTML
     let navHTML = '<ul class="space-x-4">';
@@ -27,9 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
             (page.root && (currentPath.endsWith('/index.html') || currentPath === '/' || currentPath.endsWith('/'))) ||
             (!page.root && currentPath.includes(page.path.toLowerCase()));
         
-        // Calculate proper path based on current directory
+        // Calculate proper path based on current directory and environment
         let href;
-        if (isInPagesDirectory) {
+        
+        if (is404Page) {
+            // Always use absolute paths on 404 page
+            href = page.root ? '/' : `/${page.path}`;
+        } else if (isInPagesDirectory) {
             href = page.root ? '../index.html' : page.path.replace('pages/', '');
         } else {
             href = page.path;
