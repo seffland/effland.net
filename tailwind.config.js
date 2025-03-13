@@ -3,7 +3,7 @@ module.exports = {
   content: [
     "./*.html",
     "./pages/**/*.html",
-    "./js/**/*.js"  // More specific path for your JS files
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   darkMode: 'class', // Enable dark mode with class strategy
   theme: {
@@ -18,4 +18,26 @@ module.exports = {
     },
   },
   plugins: [],
+  // Make sure these features are enabled
+  corePlugins: {
+    animation: true,
+    transform: true,
+    transitionProperty: true,
+  },
+  // Add safelist for dynamic classes that might not be detected in the static analysis
+  safelist: [
+    'animate-spin',
+    'transform',
+    'transition',
+    'duration-200',
+    'hover:-translate-y-0.5',
+    'hover:shadow-lg',
+    'hidden',
+    'bg-red-500',
+    'bg-green-500',
+    'focus:ring-2',
+    'focus:ring-indigo-500',
+    'focus:border-indigo-500',
+    'focus:ring-offset-2'
+  ]
 }
