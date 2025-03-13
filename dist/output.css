@@ -1370,6 +1370,10 @@ body {
   transition-duration: 200ms;
 }
 
+.duration-300 {
+  transition-duration: 300ms;
+}
+
 /* GitHub Calendar Custom Styles */
 
 .calendar {
