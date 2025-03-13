@@ -24,20 +24,30 @@ module.exports = {
     transform: true,
     transitionProperty: true,
   },
-  // Add safelist for dynamic classes that might not be detected in the static analysis
+  // Expanded safelist to ensure all dynamic classes work on Cloudflare
   safelist: [
-    'animate-spin',
-    'transform',
-    'transition',
-    'duration-200',
-    'hover:-translate-y-0.5',
-    'hover:shadow-lg',
-    'hidden',
-    'bg-red-500',
-    'bg-green-500',
-    'focus:ring-2',
-    'focus:ring-indigo-500',
-    'focus:border-indigo-500',
-    'focus:ring-offset-2'
+    // Animation classes
+    'animate-spin', 'animate-pulse', 'animate-bounce',
+    
+    // Transform classes
+    'transform', 'hover:-translate-y-0.5', 'translate-x-0', 'translate-y-0',
+    
+    // Transition classes
+    'transition', 'duration-200', 'duration-300',
+    
+    // Shadow utilities
+    'shadow-md', 'shadow-lg', 'hover:shadow-lg', 'hover:shadow-xl',
+    
+    // Display utilities
+    'hidden', 'block', 'inline-block', 'flex', 'inline-flex',
+    
+    // Color utilities
+    'bg-red-500', 'bg-green-500', 'bg-indigo-500', 'bg-indigo-600', 'bg-indigo-700',
+    
+    // Focus utilities
+    'focus:ring-2', 'focus:ring-indigo-500', 'focus:border-indigo-500', 'focus:ring-offset-2',
+    
+    // Interactive utilities
+    'hover:bg-indigo-700'
   ]
 }
