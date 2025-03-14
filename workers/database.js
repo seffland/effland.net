@@ -87,16 +87,19 @@ export default {
         }
         
         try {
-          const result = await client.query(`SELECT * FROM "${tableName}" LIMIT 100`);  // Using double quotes for table name
+          console.log(`Executing query: SELECT * FROM "${tableName}" LIMIT 100`);
+          const result = await client.query(`SELECT * FROM "${tableName}" LIMIT 100`);
+          console.log("Query result:", result);
           await client.end();
           return new Response(
             JSON.stringify({ rows: result.rows }),
             { headers: corsHeaders }
           );
         } catch (error) {
+          console.error("Database error:", error);
           await client.end();
           return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ error: error.message, details: error.toString() }),
             { status: 500, headers: corsHeaders }
           );
         }
@@ -154,11 +157,11 @@ export default {
           
           // Extra security for DELETE - ensure it targets our specific table with an ID
           if (query.trim().toLowerCase().startsWith('delete')) {
-            const deleteRegex = /delete\s+from\s+["']?effland-net["']?\s+where\s+id\s*=\s*\d+/i;
+            const deleteRegex = /delete\s+from\s+["']?effland_net["']?\s+where\s+id\s*=\s*\d+/i;
             if (!deleteRegex.test(query.trim().toLowerCase())) {
               await client.end();
               return new Response(
-                JSON.stringify({ error: 'DELETE operations must target the effland-net table and include an ID condition' }),
+                JSON.stringify({ error: 'DELETE operations must target the effland_net table and include an ID condition' }),
                 { status: 403, headers: corsHeaders }
               );
             }

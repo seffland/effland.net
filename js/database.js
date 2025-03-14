@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         '/api/database';
     
     // Fixed table name for all operations - using constant to avoid typos
-    const TABLE_NAME = 'effland-net';
+    const TABLE_NAME = 'effland_net';
     
     // Get DOM elements
     const dbStatus = document.getElementById('db-status');
@@ -59,8 +59,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         });
+        
+    // Debug function - check table structure
+    fetch(`${API_ENDPOINT}/query`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            query: 'SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = \'public\'' 
+        }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Database Schema:", data);
+        })
+        .catch(error => {
+            console.error("Error fetching schema:", error);
+        });
 
-    // Load effland-net table data
+    // Load effland_net table data
     function loadTableData() {
         console.log("Fetching table data from:", `${API_ENDPOINT}/table/${TABLE_NAME}`);
         tableLoading.classList.remove('hidden');
@@ -172,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const query = `INSERT INTO "${TABLE_NAME}" ("DATA") VALUES ('${dataValue.replace(/'/g, "''")}')`; // Escape single quotes for SQL
+            const query = `INSERT INTO "${TABLE_NAME}" ("data") VALUES ('${dataValue.replace(/'/g, "''")}')`; // Trying lowercase column name
             console.log("Generated query:", query);
 
             insertLoading.classList.remove('hidden');
