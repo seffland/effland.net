@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const queryHeader = document.getElementById('query-header');
     const queryBody = document.getElementById('query-body');
     const queryError = document.getElementById('query-error');
+    const insertBtn = document.getElementById('insert-btn');
 
     // Check database connection
     fetch(`${API_ENDPOINT}/status`)
@@ -124,6 +125,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     tableHeader.innerHTML = '';
                     tableBody.innerHTML = '';
                 }
+
+                // Load table columns for insert form
+                loadTableColumns(selectedTable);
             })
             .catch(error => {
                 tableLoading.classList.add('hidden');
@@ -139,9 +143,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = sqlQuery.value.trim();
         if (!query) return;
 
-        // Only allow SELECT statements for security
-        if (!query.toLowerCase().startsWith('select')) {
-            queryError.textContent = 'Only SELECT statements are allowed for security reasons';
+        // Only allow INSERT statements for security
+        if (!query.toLowerCase().startsWith('insert')) {
+            queryError.textContent = 'Only INSERT statements are allowed for security reasons';
             queryError.classList.remove('hidden');
             queryResult.classList.remove('hidden');
             return;
@@ -194,6 +198,80 @@ document.addEventListener('DOMContentLoaded', function() {
                 queryLoading.classList.add('hidden');
                 queryResult.classList.remove('hidden');
                 queryError.textContent = `Error executing query: ${error.message}`;
+                queryError.classList.remove('hidden');
+            });
+    });
+
+    // Update the event listener to fetch column information and generate form fields
+    function loadTableColumns(tableName) {
+        fetch(`${API_ENDPOINT}/columns/${tableName}`)
+            .then(response => response.json())
+            .then(data => {
+                const insertForm = document.getElementById('insert-form');
+                insertForm.innerHTML = '';
+
+                if (data.error) {
+                    insertForm.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+                    return;
+                }
+
+                data.columns.forEach(column => {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    formGroup.innerHTML = `
+                        <label for="${column.name}" class="block font-bold mb-2 dark:text-white">${column.name}</label>
+                        <input type="text" id="${column.name}" name="${column.name}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    `;
+                    insertForm.appendChild(formGroup);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading table columns:', error);
+            });
+    }
+
+    // Handle form submission to construct and execute the INSERT statement
+    insertBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(document.getElementById('insert-form'));
+        const columns = [];
+        const values = [];
+
+        formData.forEach((value, key) => {
+            columns.push(key);
+            values.push(`'${value}'`);
+        });
+
+        const query = `INSERT INTO ${tableName.textContent} (${columns.join(', ')}) VALUES (${values.join(', ')})`;
+
+        queryLoading.classList.remove('hidden');
+        queryError.classList.add('hidden');
+
+        fetch(`${API_ENDPOINT}/query`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                queryLoading.classList.add('hidden');
+
+                if (data.error) {
+                    queryError.textContent = data.error;
+                    queryError.classList.remove('hidden');
+                    return;
+                }
+
+                // Clear the form after successful insert
+                document.getElementById('insert-form').reset();
+                alert('Row inserted successfully');
+            })
+            .catch(error => {
+                queryLoading.classList.add('hidden');
+                queryError.textContent = `Error inserting row: ${error.message}`;
                 queryError.classList.remove('hidden');
             });
     });

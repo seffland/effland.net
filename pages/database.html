@@ -117,15 +117,41 @@
         </section>
 
         <section class="mb-8">
+            <h3 class="text-xl font-bold mb-4 text-primary dark:text-white">Insert Data</h3>
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow dark:bg-gray-800">
+                <form id="insert-form" class="space-y-4">
+                    <!-- Form fields will be dynamically generated here -->
+                </form>
+                <div class="flex justify-between items-center mt-4">
+                    <button id="insert-btn" class="bg-secondary text-white px-5 py-2 rounded-md hover:bg-secondary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-secondary">
+                        Insert Row
+                    </button>
+                    <div id="insert-loading" class="hidden flex items-center">
+                        <div class="animate-spin mr-3 h-5 w-5 text-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        <span class="dark:text-gray-300">Inserting row...</span>
+                    </div>
+                </div>
+                <div id="insert-error" class="mt-4 p-4 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-400 rounded-md border border-red-200 dark:border-red-800 hidden">
+                    <!-- Error messages will appear here -->
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
             <h3 class="text-xl font-bold mb-4 text-primary dark:text-white">Database Query</h3>
             <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow dark:bg-gray-800">
                 <div class="mb-4">
                     <textarea id="sql-query" rows="4" class="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-2 focus:ring-secondary dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
-                        placeholder="Enter SQL query (SELECT statements only)"></textarea>
+                        placeholder="Enter SQL INSERT statement"></textarea>
                 </div>
                 <div class="flex justify-between items-center">
                     <button id="execute-btn" class="bg-secondary text-white px-5 py-2 rounded-md hover:bg-secondary-dark transition-colors focus:outline-none focus:ring-2 focus:ring-secondary">
-                        Execute Query
+                        Execute Insert
                     </button>
                     <div id="query-loading" class="hidden flex items-center">
                         <div class="animate-spin mr-3 h-5 w-5 text-secondary">
