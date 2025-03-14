@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Debug function - check table structure
+    // Debug function - check table schema
     fetch(`${API_ENDPOINT}/query`, {
         method: 'POST',
         headers: {
