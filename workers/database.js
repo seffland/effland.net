@@ -102,6 +102,39 @@ export default {
         }
       }
 
+      // Handle table columns endpoint
+      if (path.startsWith('/columns/')) {
+        const tableName = path.replace('/columns/', '');
+        
+        // Basic SQL injection prevention
+        if (!tableName.match(/^[a-zA-Z0-9_]+$/)) {
+          await client.end();
+          return new Response(
+            JSON.stringify({ error: 'Invalid table name' }),
+            { status: 400, headers: corsHeaders }
+          );
+        }
+        
+        try {
+          const result = await client.query(`
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = $1
+          `, [tableName]);
+          await client.end();
+          return new Response(
+            JSON.stringify({ columns: result.rows.map(row => ({ name: row.column_name })) }),
+            { headers: corsHeaders }
+          );
+        } catch (error) {
+          await client.end();
+          return new Response(
+            JSON.stringify({ error: error.message }),
+            { status: 500, headers: corsHeaders }
+          );
+        }
+      }
+
       // Handle custom query endpoint (POST only)
       if (path === '/query' && request.method === 'POST') {
         try {
