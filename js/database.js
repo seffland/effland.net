@@ -12,14 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const tableBody = document.getElementById('table-body');
     const tableLoading = document.getElementById('table-loading');
     const noData = document.getElementById('no-data');
-    const sqlQuery = document.getElementById('sql-query');
-    const executeBtn = document.getElementById('execute-btn');
-    const queryLoading = document.getElementById('query-loading');
-    const queryResult = document.getElementById('query-result');
-    const queryHeader = document.getElementById('query-header');
-    const queryBody = document.getElementById('query-body');
-    const queryError = document.getElementById('query-error');
     const insertBtn = document.getElementById('insert-btn');
+    const insertLoading = document.getElementById('insert-loading');
+    const insertError = document.getElementById('insert-error');
 
     // Check database connection
     fetch(`${API_ENDPOINT}/status`)
@@ -138,70 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    // Execute custom SQL query
-    executeBtn.addEventListener('click', function() {
-        const query = sqlQuery.value.trim();
-        if (!query) return;
-
-        // Only allow INSERT statements for security
-        if (!query.toLowerCase().startsWith('insert')) {
-            queryError.textContent = 'Only INSERT statements are allowed for security reasons';
-            queryError.classList.remove('hidden');
-            queryResult.classList.remove('hidden');
-            return;
-        }
-
-        queryLoading.classList.remove('hidden');
-        queryError.classList.add('hidden');
-        queryHeader.innerHTML = '';
-        queryBody.innerHTML = '';
-
-        fetch(`${API_ENDPOINT}/query`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                queryLoading.classList.add('hidden');
-                queryResult.classList.remove('hidden');
-
-                if (data.error) {
-                    queryError.textContent = data.error;
-                    queryError.classList.remove('hidden');
-                    return;
-                }
-
-                if (data.rows && data.rows.length > 0) {
-                    // Create query result header
-                    const columns = Object.keys(data.rows[0]);
-                    queryHeader.innerHTML = `
-                        <tr>
-                            ${columns.map(col => `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${col}</th>`).join('')}
-                        </tr>
-                    `;
-
-                    // Create query result body
-                    queryBody.innerHTML = data.rows.map(row => `
-                        <tr class="hover:bg-gray-50">
-                            ${columns.map(col => `<td class="px-6 py-4 whitespace-nowrap text-sm">${row[col] !== null ? row[col] : '<span class="text-gray-400">null</span>'}</td>`).join('')}
-                        </tr>
-                    `).join('');
-                } else {
-                    queryError.textContent = 'Query returned no results';
-                    queryError.classList.remove('hidden');
-                }
-            })
-            .catch(error => {
-                queryLoading.classList.add('hidden');
-                queryResult.classList.remove('hidden');
-                queryError.textContent = `Error executing query: ${error.message}`;
-                queryError.classList.remove('hidden');
-            });
-    });
-
     // Update the event listener to fetch column information and generate form fields
     function loadTableColumns(tableName) {
         fetch(`${API_ENDPOINT}/columns/${tableName}`)
@@ -245,8 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const query = `INSERT INTO ${tableName.textContent} (${columns.join(', ')}) VALUES (${values.join(', ')})`;
 
-        queryLoading.classList.remove('hidden');
-        queryError.classList.add('hidden');
+        insertLoading.classList.remove('hidden');
+        insertError.classList.add('hidden');
 
         fetch(`${API_ENDPOINT}/query`, {
             method: 'POST',
@@ -257,22 +188,25 @@ document.addEventListener('DOMContentLoaded', function() {
         })
             .then(response => response.json())
             .then(data => {
-                queryLoading.classList.add('hidden');
+                insertLoading.classList.add('hidden');
 
                 if (data.error) {
-                    queryError.textContent = data.error;
-                    queryError.classList.remove('hidden');
+                    insertError.textContent = data.error;
+                    insertError.classList.remove('hidden');
                     return;
                 }
 
                 // Clear the form after successful insert
                 document.getElementById('insert-form').reset();
                 alert('Row inserted successfully');
+                
+                // Refresh table data to show the newly added row
+                tableSelector.dispatchEvent(new Event('change'));
             })
             .catch(error => {
-                queryLoading.classList.add('hidden');
-                queryError.textContent = `Error inserting row: ${error.message}`;
-                queryError.classList.remove('hidden');
+                insertLoading.classList.add('hidden');
+                insertError.textContent = `Error inserting row: ${error.message}`;
+                insertError.classList.remove('hidden');
             });
     });
 });

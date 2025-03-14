@@ -141,11 +141,12 @@ export default {
           const body = await request.json();
           const query = body.query;
           
-          // Security check - only allow SELECT statements
-          if (!query.trim().toLowerCase().startsWith('select')) {
+          // Security check - only allow SELECT and INSERT statements
+          if (!query.trim().toLowerCase().startsWith('select') && 
+              !query.trim().toLowerCase().startsWith('insert')) {
             await client.end();
             return new Response(
-              JSON.stringify({ error: 'Only SELECT queries are allowed' }),
+              JSON.stringify({ error: 'Only SELECT and INSERT queries are allowed' }),
               { status: 403, headers: corsHeaders }
             );
           }
