@@ -191,12 +191,12 @@ export default {
               );
             }
             
-            // We'll allow inserting only into the 'data' column or without specifying column (will use default values)
-            const validColumnsRegex = /insert\s+into\s+["']?effland_net["']?\s*(\([\s]*data[\s]*\)|(?:\s+values|\s*$))/i;
+            // Allow inserting into data and/or created_on columns
+            const validColumnsRegex = /insert\s+into\s+["']?effland_net["']?\s*(\([\s]*(data|created_on)[\s]*(\s*,\s*(data|created_on)\s*)?[\s]*\)|(?:\s+values|\s*$))/i;
             if (!validColumnsRegex.test(queryLower)) {
               if (client) await client.end();
               return new Response(
-                JSON.stringify({ error: 'INSERT operations can only specify the data column or use default values' }),
+                JSON.stringify({ error: 'INSERT operations can only specify the data and/or created_on columns or use default values' }),
                 { status: 403, headers: corsHeaders }
               );
             }

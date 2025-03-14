@@ -213,8 +213,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Try with lowercase data column name - most PostgreSQL installations default to lowercase
-            const query = `INSERT INTO "${TABLE_NAME}" (data) VALUES ('${dataValue.replace(/'/g, "''")}')`; // Trying lowercase column name
+            // Set the current timestamp and include it in the INSERT statement
+            const query = `INSERT INTO "${TABLE_NAME}" (data, created_on) VALUES ('${dataValue.replace(/'/g, "''")}', NOW())`;
             console.log("Generated query:", query);
 
             if (insertLoading && insertError) {
