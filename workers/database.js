@@ -143,11 +143,12 @@ export default {
         try {
           const body = await request.json();
           const query = body.query;
+          const queryLower = query.trim().toLowerCase();
           
           // Security check - only allow SELECT, INSERT and DELETE statements
-          if (!query.trim().toLowerCase().startsWith('select') && 
-              !query.trim().toLowerCase().startsWith('insert') &&
-              !query.trim().toLowerCase().startsWith('delete')) {
+          if (!queryLower.startsWith('select') && 
+              !queryLower.startsWith('insert') &&
+              !queryLower.startsWith('delete')) {
             await client.end();
             return new Response(
               JSON.stringify({ error: 'Only SELECT, INSERT and DELETE queries are allowed' }),
@@ -156,15 +157,40 @@ export default {
           }
           
           // Extra security for DELETE - ensure it targets our specific table with an ID
-          if (query.trim().toLowerCase().startsWith('delete')) {
+          if (queryLower.startsWith('delete')) {
             const deleteRegex = /delete\s+from\s+["']?effland_net["']?\s+where\s+id\s*=\s*\d+/i;
-            if (!deleteRegex.test(query.trim().toLowerCase())) {
+            if (!deleteRegex.test(queryLower)) {
               await client.end();
               return new Response(
                 JSON.stringify({ error: 'DELETE operations must target the effland_net table and include an ID condition' }),
                 { status: 403, headers: corsHeaders }
               );
             }
+          }
+          
+          // Extra security for INSERT - ensure it targets our specific table and has only valid columns
+          if (queryLower.startsWith('insert')) {
+            // Check if it's inserting into effland_net
+            const validTableRegex = /insert\s+into\s+["']?effland_net["']?/i;
+            if (!validTableRegex.test(queryLower)) {
+              await client.end();
+              return new Response(
+                JSON.stringify({ error: 'INSERT operations are only allowed for the effland_net table' }),
+                { status: 403, headers: corsHeaders }
+              );
+            }
+            
+            // We'll allow inserting only into the 'data' column or without specifying column (will use default values)
+            const validColumnsRegex = /insert\s+into\s+["']?effland_net["']?\s*(\([\s]*data[\s]*\)|(?:\s+values|\s*$))/i;
+            if (!validColumnsRegex.test(queryLower)) {
+              await client.end();
+              return new Response(
+                JSON.stringify({ error: 'INSERT operations can only specify the data column or use default values' }),
+                { status: 403, headers: corsHeaders }
+              );
+            }
+            
+            console.log("INSERT query passed validation:", query);
           }
           
           const result = await client.query(query);
