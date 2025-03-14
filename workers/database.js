@@ -156,19 +156,39 @@ export default {
           
           console.log("Received query:", query);
           
-          // Security check - only allow SELECT, INSERT and DELETE statements
-          if (!queryLower.startsWith('select') && 
-              !queryLower.startsWith('insert') &&
-              !queryLower.startsWith('delete')) {
+          // Security check - allow SELECT, INSERT, DELETE and specific ALTER TABLE statements 
+          const isSelect = queryLower.startsWith('select');
+          const isInsert = queryLower.startsWith('insert');
+          const isDelete = queryLower.startsWith('delete');
+          const isAlterTable = queryLower.startsWith('alter table') && 
+                              queryLower.includes('effland_net') && 
+                              queryLower.includes('created_on') && 
+                              queryLower.includes('default');
+          
+          if (!isSelect && !isInsert && !isDelete && !isAlterTable) {
             if (client) await client.end();
             return new Response(
-              JSON.stringify({ error: 'Only SELECT, INSERT and DELETE queries are allowed' }),
+              JSON.stringify({ error: 'Only SELECT, INSERT, DELETE, and specific ALTER TABLE statements are allowed' }),
               { status: 403, headers: corsHeaders }
             );
           }
           
+          // Extra security for ALTER TABLE - ensure it targets our specific table
+          if (isAlterTable) {
+            const alterTableRegex = /alter\s+table\s+["']?effland_net["']?\s+alter\s+column\s+["']?created_on["']?\s+set\s+default\s+/i;
+            if (!alterTableRegex.test(queryLower)) {
+              if (client) await client.end();
+              return new Response(
+                JSON.stringify({ error: 'Only specific ALTER TABLE statements for the created_on column in effland_net are allowed' }),
+                { status: 403, headers: corsHeaders }
+              );
+            }
+            
+            console.log("ALTER TABLE query passed validation:", query);
+          }
+          
           // Extra security for DELETE - ensure it targets our specific table with an ID
-          if (queryLower.startsWith('delete')) {
+          if (isDelete) {
             const deleteRegex = /delete\s+from\s+["']?effland_net["']?\s+where\s+id\s*=\s*\d+/i;
             if (!deleteRegex.test(queryLower)) {
               if (client) await client.end();
@@ -179,24 +199,14 @@ export default {
             }
           }
           
-          // Extra security for INSERT - ensure it targets our specific table and has only valid columns
-          if (queryLower.startsWith('insert')) {
+          // Extra security for INSERT - ensure it targets our specific table
+          if (isInsert) {
             // Check if it's inserting into effland_net
             const validTableRegex = /insert\s+into\s+["']?effland_net["']?/i;
             if (!validTableRegex.test(queryLower)) {
               if (client) await client.end();
               return new Response(
                 JSON.stringify({ error: 'INSERT operations are only allowed for the effland_net table' }),
-                { status: 403, headers: corsHeaders }
-              );
-            }
-            
-            // Allow inserting into data and/or created_on columns
-            const validColumnsRegex = /insert\s+into\s+["']?effland_net["']?\s*(\([\s]*(data|created_on)[\s]*(\s*,\s*(data|created_on)\s*)?[\s]*\)|(?:\s+values|\s*$))/i;
-            if (!validColumnsRegex.test(queryLower)) {
-              if (client) await client.end();
-              return new Response(
-                JSON.stringify({ error: 'INSERT operations can only specify the data and/or created_on columns or use default values' }),
                 { status: 403, headers: corsHeaders }
               );
             }
