@@ -40,9 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 // Load table data immediately since we have a fixed table
                 loadTableData();
-                
-                // Check the table structure to debug the timestamp issue
-                checkTableStructure();
             } else {
                 dbStatus.innerHTML = `
                     <div class="flex items-center">
@@ -63,46 +60,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         });
         
-    // Debug function to check table structure
-    function checkTableStructure() {
-        fetch(`${API_ENDPOINT}/query`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-                query: `SELECT column_name, data_type, column_default, is_nullable 
-                        FROM information_schema.columns 
-                        WHERE table_name = '${TABLE_NAME}'` 
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Table Structure for " + TABLE_NAME + ":", data);
-        })
-        .catch(error => {
-            console.error("Error fetching table structure:", error);
-        });
-    }
-    
-    // Debug function - check table schema
-    fetch(`${API_ENDPOINT}/query`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-            query: 'SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = \'public\'' 
-        }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Database Schema:", data);
-        })
-        .catch(error => {
-            console.error("Error fetching schema:", error);
-        });
-
     // Load effland_net table data
     function loadTableData() {
         console.log("Fetching table data from:", `${API_ENDPOINT}/table/${TABLE_NAME}`);
@@ -238,105 +195,90 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // First, let's try to fix the created_on column default if needed
-            const alterTableQuery = `ALTER TABLE ${TABLE_NAME} ALTER COLUMN created_on SET DEFAULT CURRENT_TIMESTAMP`;
-            
+            // For the insert, we'll now use a simpler approach without specifying the created_on column
+            // This will use the default value we just set
+            const query = `INSERT INTO "${TABLE_NAME}" (data) VALUES ('${dataValue.replace(/'/g, "''")}')`;
+            console.log("Generated query:", query);
+
+            if (insertLoading && insertError) {
+                insertLoading.classList.remove('hidden');
+                insertError.classList.add('hidden');
+            }
+
             fetch(`${API_ENDPOINT}/query`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ query: alterTableQuery }),
+                body: JSON.stringify({ query }),
             })
-            .then(response => {
-                console.log("Attempted to set default value for created_on column");
-                // Continue with insert regardless of success/failure of the ALTER TABLE
-                
-                // For the insert, we'll now use a simpler approach without specifying the created_on column
-                // This will use the default value we just set
-                const query = `INSERT INTO "${TABLE_NAME}" (data) VALUES ('${dataValue.replace(/'/g, "''")}')`;
-                console.log("Generated query:", query);
+                .then(async response => {
+                    const responseText = await response.text();
+                    console.log("Raw server response:", responseText);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Server responded with ${response.status}: ${responseText}`);
+                    }
+                    
+                    // Parse the JSON response after we've logged the raw text
+                    return JSON.parse(responseText);
+                })
+                .then(data => {
+                    if (insertLoading) {
+                        insertLoading.classList.add('hidden');
+                    }
 
-                if (insertLoading && insertError) {
-                    insertLoading.classList.remove('hidden');
-                    insertError.classList.add('hidden');
-                }
-
-                return fetch(`${API_ENDPOINT}/query`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ query }),
-                });
-            })
-            .then(async response => {
-                const responseText = await response.text();
-                console.log("Raw server response:", responseText);
-                
-                if (!response.ok) {
-                    throw new Error(`Server responded with ${response.status}: ${responseText}`);
-                }
-                
-                // Parse the JSON response after we've logged the raw text
-                return JSON.parse(responseText);
-            })
-            .then(data => {
-                if (insertLoading) {
-                    insertLoading.classList.add('hidden');
-                }
-
-                if (data.error) {
-                    if (insertError) {
-                        insertError.textContent = `Error: ${data.error}`;
-                        if (data.details) {
-                            insertError.textContent += ` (${data.details})`;
+                    if (data.error) {
+                        if (insertError) {
+                            insertError.textContent = `Error: ${data.error}`;
+                            if (data.details) {
+                                insertError.textContent += ` (${data.details})`;
+                            }
+                            insertError.classList.remove('hidden');
                         }
+                        return;
+                    }
+
+                    // Clear the form after successful insert
+                    const insertForm = document.getElementById('insert-form');
+                    if (insertForm) {
+                        insertForm.reset();
+                        
+                        // Show success message
+                        const successMsg = document.createElement('div');
+                        successMsg.className = 'mt-4 p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-md border border-green-200 dark:border-green-800';
+                        successMsg.textContent = 'Row inserted successfully';
+                        insertForm.appendChild(successMsg);
+                        
+                        // Remove success message after 3 seconds
+                        setTimeout(() => {
+                            successMsg.remove();
+                        }, 3000);
+                    }
+                    
+                    // Refresh table data to show the newly added row
+                    loadTableData();
+                })
+                .catch(error => {
+                    console.error("Error inserting row:", error);
+                    if (insertLoading) {
+                        insertLoading.classList.add('hidden');
+                    }
+                    if (insertError) {
+                        insertError.innerHTML = `<p>Error inserting row: ${error.message}</p>`;
+                        
+                        // Add try again button
+                        const tryAgainBtn = document.createElement('button');
+                        tryAgainBtn.className = 'mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600';
+                        tryAgainBtn.textContent = 'Try Again';
+                        tryAgainBtn.onclick = function() {
+                            insertError.classList.add('hidden');
+                        };
+                        insertError.appendChild(tryAgainBtn);
+                        
                         insertError.classList.remove('hidden');
                     }
-                    return;
-                }
-
-                // Clear the form after successful insert
-                const insertForm = document.getElementById('insert-form');
-                if (insertForm) {
-                    insertForm.reset();
-                    
-                    // Show success message
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'mt-4 p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-md border border-green-200 dark:border-green-800';
-                    successMsg.textContent = 'Row inserted successfully';
-                    insertForm.appendChild(successMsg);
-                    
-                    // Remove success message after 3 seconds
-                    setTimeout(() => {
-                        successMsg.remove();
-                    }, 3000);
-                }
-                
-                // Refresh table data to show the newly added row
-                loadTableData();
-            })
-            .catch(error => {
-                console.error("Error inserting row:", error);
-                if (insertLoading) {
-                    insertLoading.classList.add('hidden');
-                }
-                if (insertError) {
-                    insertError.innerHTML = `<p>Error inserting row: ${error.message}</p>`;
-                    
-                    // Add try again button
-                    const tryAgainBtn = document.createElement('button');
-                    tryAgainBtn.className = 'mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600';
-                    tryAgainBtn.textContent = 'Try Again';
-                    tryAgainBtn.onclick = function() {
-                        insertError.classList.add('hidden');
-                    };
-                    insertError.appendChild(tryAgainBtn);
-                    
-                    insertError.classList.remove('hidden');
-                }
-            });
+                });
         });
     } else {
         console.error("Insert button element not found");
