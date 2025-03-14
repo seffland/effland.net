@@ -81,6 +81,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load effland_net table data
     function loadTableData() {
         console.log("Fetching table data from:", `${API_ENDPOINT}/table/${TABLE_NAME}`);
+        
+        // Make sure all necessary DOM elements exist before using them
+        if (!tableLoading || !tableContainer || !noData) {
+            console.error("Required DOM elements not found for table display");
+            return;
+        }
+        
         tableLoading.classList.remove('hidden');
         tableContainer.classList.remove('hidden');
         noData.classList.add('hidden');
@@ -94,6 +101,12 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log("Data received:", data);
+                
+                if (!tableLoading || !tableHeader || !tableBody || !noData) {
+                    console.error("Required DOM elements not found for displaying table data");
+                    return;
+                }
+                
                 tableLoading.classList.add('hidden');
                 
                 if (data.error) {
@@ -142,11 +155,17 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error("Error loading table data:", error);
-                tableLoading.classList.add('hidden');
-                noData.textContent = `Error loading table data: ${error.message}`;
-                noData.classList.remove('hidden');
-                tableHeader.innerHTML = '';
-                tableBody.innerHTML = '';
+                
+                if (tableLoading && noData) {
+                    tableLoading.classList.add('hidden');
+                    noData.textContent = `Error loading table data: ${error.message}`;
+                    noData.classList.remove('hidden');
+                }
+                
+                if (tableHeader && tableBody) {
+                    tableHeader.innerHTML = '';
+                    tableBody.innerHTML = '';
+                }
             });
     }
 
@@ -185,16 +204,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const dataValue = dataField.value.trim();
             
             if (!dataValue) {
-                insertError.textContent = "Please enter some data";
-                insertError.classList.remove('hidden');
+                if (insertError) {
+                    insertError.textContent = "Please enter some data";
+                    insertError.classList.remove('hidden');
+                }
                 return;
             }
 
-            const query = `INSERT INTO "${TABLE_NAME}" ("data") VALUES ('${dataValue.replace(/'/g, "''")}')`; // Trying lowercase column name
+            // Try with lowercase data column name - most PostgreSQL installations default to lowercase
+            const query = `INSERT INTO "${TABLE_NAME}" (data) VALUES ('${dataValue.replace(/'/g, "''")}')`; // Trying lowercase column name
             console.log("Generated query:", query);
 
-            insertLoading.classList.remove('hidden');
-            insertError.classList.add('hidden');
+            if (insertLoading && insertError) {
+                insertLoading.classList.remove('hidden');
+                insertError.classList.add('hidden');
+            }
 
             fetch(`${API_ENDPOINT}/query`, {
                 method: 'POST',
@@ -210,36 +234,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     return response.json();
                 })
                 .then(data => {
-                    insertLoading.classList.add('hidden');
+                    if (insertLoading) {
+                        insertLoading.classList.add('hidden');
+                    }
 
                     if (data.error) {
-                        insertError.textContent = data.error;
-                        insertError.classList.remove('hidden');
+                        if (insertError) {
+                            insertError.textContent = data.error;
+                            insertError.classList.remove('hidden');
+                        }
                         return;
                     }
 
                     // Clear the form after successful insert
-                    document.getElementById('insert-form').reset();
-                    
-                    // Show success message
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'mt-4 p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-md border border-green-200 dark:border-green-800';
-                    successMsg.textContent = 'Row inserted successfully';
-                    document.getElementById('insert-form').appendChild(successMsg);
-                    
-                    // Remove success message after 3 seconds
-                    setTimeout(() => {
-                        successMsg.remove();
-                    }, 3000);
+                    const insertForm = document.getElementById('insert-form');
+                    if (insertForm) {
+                        insertForm.reset();
+                        
+                        // Show success message
+                        const successMsg = document.createElement('div');
+                        successMsg.className = 'mt-4 p-4 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded-md border border-green-200 dark:border-green-800';
+                        successMsg.textContent = 'Row inserted successfully';
+                        insertForm.appendChild(successMsg);
+                        
+                        // Remove success message after 3 seconds
+                        setTimeout(() => {
+                            successMsg.remove();
+                        }, 3000);
+                    }
                     
                     // Refresh table data to show the newly added row
                     loadTableData();
                 })
                 .catch(error => {
                     console.error("Error inserting row:", error);
-                    insertLoading.classList.add('hidden');
-                    insertError.textContent = `Error inserting row: ${error.message}`;
-                    insertError.classList.remove('hidden');
+                    if (insertLoading) {
+                        insertLoading.classList.add('hidden');
+                    }
+                    if (insertError) {
+                        insertError.textContent = `Error inserting row: ${error.message}`;
+                        insertError.classList.remove('hidden');
+                    }
                 });
         });
     } else {
