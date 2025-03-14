@@ -78,7 +78,7 @@ export default {
         const tableName = path.replace('/table/', '');
         
         // Basic SQL injection prevention
-        if (!tableName.match(/^[a-zA-Z0-9_]+$/)) {
+        if (!tableName.match(/^[a-zA-Z0-9_-]+$/)) {  // Added hyphen to allowed characters
           await client.end();
           return new Response(
             JSON.stringify({ error: 'Invalid table name' }),
@@ -87,7 +87,7 @@ export default {
         }
         
         try {
-          const result = await client.query(`SELECT * FROM ${tableName} LIMIT 100`);
+          const result = await client.query(`SELECT * FROM "${tableName}" LIMIT 100`);  // Using double quotes for table name
           await client.end();
           return new Response(
             JSON.stringify({ rows: result.rows }),
@@ -107,7 +107,7 @@ export default {
         const tableName = path.replace('/columns/', '');
         
         // Basic SQL injection prevention
-        if (!tableName.match(/^[a-zA-Z0-9_]+$/)) {
+        if (!tableName.match(/^[a-zA-Z0-9_-]+$/)) {  // Added hyphen to allowed characters
           await client.end();
           return new Response(
             JSON.stringify({ error: 'Invalid table name' }),
