@@ -38,6 +38,27 @@ export default {
       await client.connect();
       console.log("Database connection established");
 
+      // Ensure the default value for the created_on column is set to CURRENT_TIMESTAMP
+      if (path === '/ensure-default') {
+        try {
+          const alterQuery = `ALTER TABLE effland_net ALTER COLUMN created_on SET DEFAULT CURRENT_TIMESTAMP`;
+          await client.query(alterQuery);
+          console.log("Default value for created_on column set to CURRENT_TIMESTAMP");
+          await client.end();
+          return new Response(
+            JSON.stringify({ success: true }),
+            { headers: corsHeaders }
+          );
+        } catch (error) {
+          console.error("Error setting default value for created_on column:", error);
+          if (client) await client.end();
+          return new Response(
+            JSON.stringify({ success: false, error: error.message, stack: error.stack }),
+            { headers: corsHeaders }
+          );
+        }
+      }
+
       // Handle database status endpoint
       if (path === '/status') {
         try {
