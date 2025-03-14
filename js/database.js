@@ -190,7 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const query = `INSERT INTO "${TABLE_NAME}" ("data") VALUES ('${dataValue.replace(/'/g, "''")}')`; // Trying lowercase column name
+            // Try with lowercase data column name - most PostgreSQL installations default to lowercase
+            const query = `INSERT INTO "${TABLE_NAME}" (data) VALUES ('${dataValue.replace(/'/g, "''")}')`; // Trying lowercase column name
             console.log("Generated query:", query);
 
             insertLoading.classList.remove('hidden');
