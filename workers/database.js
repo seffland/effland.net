@@ -8,6 +8,24 @@
 // Import Cloudflare's PostgreSQL client
 import { Client } from '@neondatabase/serverless';
 
+// Function to insert wind speed data into the WindspeedLogs table
+async function insertWindSpeedData(client, windspeed, unit, location) {
+    const query = `INSERT INTO "WindspeedLogs" (timestamp, windspeed, unit, location) VALUES (CURRENT_TIMESTAMP, $1, $2, $3)`;
+    const values = [windspeed, unit, location];
+    await client.query(query, values);
+}
+
+// Function to fetch wind speed data from the weather station
+async function fetchWindSpeedData() {
+    // Replace with actual API call to fetch wind speed data from your weather station
+    // For demonstration, we'll use dummy data
+    return {
+        windspeed: 5.5,
+        unit: 'm/s',
+        location: 'Your Location'
+    };
+}
+
 export default {
   async fetch(request, env, ctx) {
     // Configure CORS
@@ -259,6 +277,33 @@ export default {
               details: error.toString()
             }),
             { status: 500, headers: corsHeaders }
+          );
+        }
+      }
+
+      // Handle wind speed data insertion endpoint
+      if (path === '/insert-wind-speed') {
+        let client = null;
+        try {
+          client = new Client(env.DATABASE_URL);
+          await client.connect();
+          console.log("Database connection established");
+
+          const windSpeedData = await fetchWindSpeedData();
+          await insertWindSpeedData(client, windSpeedData.windspeed, windSpeedData.unit, windSpeedData.location);
+          console.log("Wind speed data inserted successfully");
+
+          await client.end();
+          return new Response(
+            JSON.stringify({ success: true }),
+            { headers: corsHeaders }
+          );
+        } catch (error) {
+          console.error("Error inserting wind speed data:", error);
+          if (client) await client.end();
+          return new Response(
+            JSON.stringify({ success: false, error: error.message }),
+            { headers: corsHeaders }
           );
         }
       }

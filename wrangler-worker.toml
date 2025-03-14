@@ -14,3 +14,8 @@ compatibility_date = "2025-03-13"
 [[routes]]
 pattern = "effland.net/api/database/*"
 zone_name = "effland.net"
+
+[triggers]
+crons = [
+  { schedule = "0 * * * *", path = "/api/database/insert-wind-speed" }
+]
