@@ -141,14 +141,27 @@ export default {
           const body = await request.json();
           const query = body.query;
           
-          // Security check - only allow SELECT and INSERT statements
+          // Security check - only allow SELECT, INSERT and DELETE statements
           if (!query.trim().toLowerCase().startsWith('select') && 
-              !query.trim().toLowerCase().startsWith('insert')) {
+              !query.trim().toLowerCase().startsWith('insert') &&
+              !query.trim().toLowerCase().startsWith('delete')) {
             await client.end();
             return new Response(
-              JSON.stringify({ error: 'Only SELECT and INSERT queries are allowed' }),
+              JSON.stringify({ error: 'Only SELECT, INSERT and DELETE queries are allowed' }),
               { status: 403, headers: corsHeaders }
             );
+          }
+          
+          // Extra security for DELETE - ensure it targets our specific table with an ID
+          if (query.trim().toLowerCase().startsWith('delete')) {
+            const deleteRegex = /delete\s+from\s+["']?effland-net["']?\s+where\s+id\s*=\s*\d+/i;
+            if (!deleteRegex.test(query.trim().toLowerCase())) {
+              await client.end();
+              return new Response(
+                JSON.stringify({ error: 'DELETE operations must target the effland-net table and include an ID condition' }),
+                { status: 403, headers: corsHeaders }
+              );
+            }
           }
           
           const result = await client.query(query);
