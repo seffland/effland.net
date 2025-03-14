@@ -93,9 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
         noData.classList.add('hidden');
 
         fetch(`${API_ENDPOINT}/table/${TABLE_NAME}`)
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
-                    throw new Error(`Server responded with ${response.status}`);
+                    const errorText = await response.text();
+                    console.error("Server error response:", errorText);
+                    throw new Error(`Server responded with ${response.status}: ${errorText}`);
                 }
                 return response.json();
             })
@@ -227,11 +229,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ query }),
             })
-                .then(response => {
+                .then(async response => {
+                    const responseText = await response.text();
+                    console.log("Raw server response:", responseText);
+                    
                     if (!response.ok) {
-                        throw new Error(`Server responded with ${response.status}`);
+                        throw new Error(`Server responded with ${response.status}: ${responseText}`);
                     }
-                    return response.json();
+                    
+                    // Parse the JSON response after we've logged the raw text
+                    return JSON.parse(responseText);
                 })
                 .then(data => {
                     if (insertLoading) {
@@ -240,7 +247,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (data.error) {
                         if (insertError) {
-                            insertError.textContent = data.error;
+                            insertError.textContent = `Error: ${data.error}`;
+                            if (data.details) {
+                                insertError.textContent += ` (${data.details})`;
+                            }
                             insertError.classList.remove('hidden');
                         }
                         return;
@@ -272,7 +282,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         insertLoading.classList.add('hidden');
                     }
                     if (insertError) {
-                        insertError.textContent = `Error inserting row: ${error.message}`;
+                        insertError.innerHTML = `<p>Error inserting row: ${error.message}</p>`;
+                        
+                        // Add try again button
+                        const tryAgainBtn = document.createElement('button');
+                        tryAgainBtn.className = 'mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600';
+                        tryAgainBtn.textContent = 'Try Again';
+                        tryAgainBtn.onclick = function() {
+                            insertError.classList.add('hidden');
+                        };
+                        insertError.appendChild(tryAgainBtn);
+                        
                         insertError.classList.remove('hidden');
                     }
                 });
@@ -297,11 +317,16 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({ query }),
         })
-            .then(response => {
+            .then(async response => {
+                const responseText = await response.text();
+                console.log("Raw server response for DELETE:", responseText);
+                
                 if (!response.ok) {
-                    throw new Error(`Server responded with ${response.status}`);
+                    throw new Error(`Server responded with ${response.status}: ${responseText}`);
                 }
-                return response.json();
+                
+                // Parse the JSON response after we've logged the raw text
+                return JSON.parse(responseText);
             })
             .then(data => {
                 if (data.error) {

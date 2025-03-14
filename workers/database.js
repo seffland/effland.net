@@ -23,14 +23,20 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
+    let client = null;
+    
     try {
       // Parse the URL
       const url = new URL(request.url);
       const path = url.pathname.replace('/api/database', '');
 
+      // Log request details for debugging
+      console.log(`Processing ${request.method} request to ${path}`);
+
       // Create database client
-      const client = new Client(env.DATABASE_URL);
+      client = new Client(env.DATABASE_URL);
       await client.connect();
+      console.log("Database connection established");
 
       // Handle database status endpoint
       if (path === '/status') {
@@ -42,9 +48,10 @@ export default {
             { headers: corsHeaders }
           );
         } catch (error) {
-          await client.end();
+          console.error("Database status check error:", error);
+          if (client) await client.end();
           return new Response(
-            JSON.stringify({ connected: false, error: error.message }),
+            JSON.stringify({ connected: false, error: error.message, stack: error.stack }),
             { headers: corsHeaders }
           );
         }
@@ -65,9 +72,10 @@ export default {
             { headers: corsHeaders }
           );
         } catch (error) {
-          await client.end();
+          console.error("Tables list error:", error);
+          if (client) await client.end();
           return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ error: error.message, stack: error.stack }),
             { status: 500, headers: corsHeaders }
           );
         }
@@ -79,7 +87,7 @@ export default {
         
         // Basic SQL injection prevention
         if (!tableName.match(/^[a-zA-Z0-9_-]+$/)) {  // Added hyphen to allowed characters
-          await client.end();
+          if (client) await client.end();
           return new Response(
             JSON.stringify({ error: 'Invalid table name' }),
             { status: 400, headers: corsHeaders }
@@ -96,10 +104,10 @@ export default {
             { headers: corsHeaders }
           );
         } catch (error) {
-          console.error("Database error:", error);
-          await client.end();
+          console.error("Table data error:", error);
+          if (client) await client.end();
           return new Response(
-            JSON.stringify({ error: error.message, details: error.toString() }),
+            JSON.stringify({ error: error.message, stack: error.stack, details: error.toString() }),
             { status: 500, headers: corsHeaders }
           );
         }
@@ -111,7 +119,7 @@ export default {
         
         // Basic SQL injection prevention
         if (!tableName.match(/^[a-zA-Z0-9_-]+$/)) {  // Added hyphen to allowed characters
-          await client.end();
+          if (client) await client.end();
           return new Response(
             JSON.stringify({ error: 'Invalid table name' }),
             { status: 400, headers: corsHeaders }
@@ -130,9 +138,10 @@ export default {
             { headers: corsHeaders }
           );
         } catch (error) {
-          await client.end();
+          console.error("Columns error:", error);
+          if (client) await client.end();
           return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ error: error.message, stack: error.stack }),
             { status: 500, headers: corsHeaders }
           );
         }
@@ -145,11 +154,13 @@ export default {
           const query = body.query;
           const queryLower = query.trim().toLowerCase();
           
+          console.log("Received query:", query);
+          
           // Security check - only allow SELECT, INSERT and DELETE statements
           if (!queryLower.startsWith('select') && 
               !queryLower.startsWith('insert') &&
               !queryLower.startsWith('delete')) {
-            await client.end();
+            if (client) await client.end();
             return new Response(
               JSON.stringify({ error: 'Only SELECT, INSERT and DELETE queries are allowed' }),
               { status: 403, headers: corsHeaders }
@@ -160,7 +171,7 @@ export default {
           if (queryLower.startsWith('delete')) {
             const deleteRegex = /delete\s+from\s+["']?effland_net["']?\s+where\s+id\s*=\s*\d+/i;
             if (!deleteRegex.test(queryLower)) {
-              await client.end();
+              if (client) await client.end();
               return new Response(
                 JSON.stringify({ error: 'DELETE operations must target the effland_net table and include an ID condition' }),
                 { status: 403, headers: corsHeaders }
@@ -173,7 +184,7 @@ export default {
             // Check if it's inserting into effland_net
             const validTableRegex = /insert\s+into\s+["']?effland_net["']?/i;
             if (!validTableRegex.test(queryLower)) {
-              await client.end();
+              if (client) await client.end();
               return new Response(
                 JSON.stringify({ error: 'INSERT operations are only allowed for the effland_net table' }),
                 { status: 403, headers: corsHeaders }
@@ -183,7 +194,7 @@ export default {
             // We'll allow inserting only into the 'data' column or without specifying column (will use default values)
             const validColumnsRegex = /insert\s+into\s+["']?effland_net["']?\s*(\([\s]*data[\s]*\)|(?:\s+values|\s*$))/i;
             if (!validColumnsRegex.test(queryLower)) {
-              await client.end();
+              if (client) await client.end();
               return new Response(
                 JSON.stringify({ error: 'INSERT operations can only specify the data column or use default values' }),
                 { status: 403, headers: corsHeaders }
@@ -193,23 +204,36 @@ export default {
             console.log("INSERT query passed validation:", query);
           }
           
+          console.log("Executing query:", query);
           const result = await client.query(query);
-          await client.end();
+          console.log("Query executed successfully:", result);
+          
+          if (client) await client.end();
+          
           return new Response(
-            JSON.stringify({ rows: result.rows }),
+            JSON.stringify({ 
+              success: true,
+              rows: result.rows,
+              rowCount: result.rowCount
+            }),
             { headers: corsHeaders }
           );
         } catch (error) {
-          await client.end();
+          console.error("Query error:", error);
+          if (client) await client.end();
           return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ 
+              error: error.message, 
+              stack: error.stack,
+              details: error.toString()
+            }),
             { status: 500, headers: corsHeaders }
           );
         }
       }
 
       // Close client if we reach this point
-      await client.end();
+      if (client) await client.end();
 
       // Handle 404 for any other path
       return new Response(
@@ -217,8 +241,21 @@ export default {
         { status: 404, headers: corsHeaders }
       );
     } catch (error) {
+      console.error("Worker error:", error);
+      if (client) {
+        try {
+          await client.end();
+        } catch (closeError) {
+          console.error("Error closing database connection:", closeError);
+        }
+      }
+      
       return new Response(
-        JSON.stringify({ error: error.message || "Internal Server Error" }),
+        JSON.stringify({ 
+          error: error.message || "Internal Server Error",
+          stack: error.stack,
+          details: error.toString()
+        }),
         { status: 500, headers: corsHeaders }
       );
     }
